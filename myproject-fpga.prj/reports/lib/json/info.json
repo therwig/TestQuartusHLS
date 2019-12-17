@@ -1,0 +1,8 @@
+{"name":"Info","rows":[
+{"classes":["info-table"],"data":["./myproject-fpga"],"name":"Project Name"},
+{"data":["Arria10, 10AS066H2F34I1SG"],"name":"Target Family, Device"},
+{"data":["19.2.0 Build 57"],"name":"i++ Version"},
+{"data":["19.2.0 Build 57 Pro"],"name":"Quartus Version"},
+{"data":["i++ myproject_test.cpp firmware/myproject.cpp -v --fpc --fp-relaxed -march=10AS066H2F34I1SG -o myproject-fpga --clock 5ns"],"name":"Command"},
+{"data":["Tue Dec 17 14:07:09 2019"],"name":"Reports Generated At"}
+]}
