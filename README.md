@@ -8,4 +8,4 @@ The test configuration is specified in `myproject_test.cpp` while the firmware i
 make myproject-fpga
 ./myproject-fpga
 ```
-The report subsequently generated can be found in the `report` folder.
+The report subsequently generated can be found in the `myproject-fpga.prj/reports/` folder.
