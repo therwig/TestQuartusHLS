@@ -34,7 +34,7 @@
                 [
                   {
                     "filename":"firmware/myproject.cpp"
-                    , "line":25
+                    , "line":7
                   }
                 ]
               ]
@@ -42,7 +42,7 @@
               [
                 {
                   "type":"table"
-                  , "Width":"160 bits"
+                  , "Width":"320 bits"
                   , "Depth":"0"
                   , "Stall-free":"No"
                   , "Start Cycle":"1"
@@ -67,93 +67,13 @@
             , {
               "type":"inst"
               , "id":7
-              , "name":"Store"
-              , "debug":
-              [
-                [
-                  {
-                    "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                    , "line":443
-                  }
-                ]
-              ]
-              , "details":
-              [
-                {
-                  "type":"table"
-                  , "Width":"8192 bits"
-                  , "Type":"Local-pipelined never-stall"
-                  , "Stall-free":"Yes"
-                  , "Stores to":"sigmoid_table"
-                  , "Start Cycle":"13"
-                  , "Latency":"1"
-                  , "Reference":
-                  [
-                    {
-                      "type":"text"
-                      , "text":"See %L for more information"
-                      , "links":
-                      [
-                        {
-                          "guide":"Reference Manual"
-                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-            , {
-              "type":"inst"
-              , "id":8
-              , "name":"Load"
-              , "debug":
-              [
-                [
-                  {
-                    "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                    , "line":277
-                  }
-                ]
-              ]
-              , "details":
-              [
-                {
-                  "type":"table"
-                  , "Width":"16 bits"
-                  , "Type":"Local-pipelined never-stall"
-                  , "Stall-free":"Yes"
-                  , "Loads from":"sigmoid_table"
-                  , "Start Cycle":"14"
-                  , "Latency":"3"
-                  , "Reference":
-                  [
-                    {
-                      "type":"text"
-                      , "text":"See %L for more information"
-                      , "links":
-                      [
-                        {
-                          "guide":"Reference Manual"
-                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-            , {
-              "type":"inst"
-              , "id":9
               , "name":"Stream Write"
               , "debug":
               [
                 [
                   {
                     "filename":"firmware/myproject.cpp"
-                    , "line":55
+                    , "line":434
                   }
                 ]
               ]
@@ -161,10 +81,10 @@
               [
                 {
                   "type":"table"
-                  , "Width":"16 bits"
+                  , "Width":"32 bits"
                   , "Depth":"0"
                   , "Stall-free":"No"
-                  , "Start Cycle":"21"
+                  , "Start Cycle":"14"
                   , "Latency":"0"
                   , "Reference":
                   [
@@ -185,7 +105,7 @@
             }
             , {
               "type":"inst"
-              , "id":11
+              , "id":9
               , "name":"Loop Input"
               , "debug":
               [
@@ -202,19 +122,19 @@
                   "type":"table"
                   , "Start Cycle":"0"
                   , "Latency":"1"
-                  , "Loops To":"12"
+                  , "Loops To":"10"
                 }
               ]
             }
             , {
               "type":"inst"
-              , "id":12
+              , "id":10
               , "name":"Loop End"
               , "details":
               [
                 {
                   "type":"table"
-                  , "Start Cycle":"21"
+                  , "Start Cycle":"1"
                   , "Latency":"1"
                 }
               ]
@@ -224,67 +144,12 @@
           [
             {
               "type":"table"
-              , "Latency":"21"
+              , "Latency":"1"
               , "II":"1"
               , "Subloops":"No"
               , "Pipelined":"Yes"
               , "Fmax Bottlenecks":"No"
               , "Loop Info":""
-            }
-          ]
-        }
-        , {
-          "type":"memtype"
-          , "id":14
-          , "name":"Local Memory"
-          , "children":
-          [
-            {
-              "type":"memsys"
-              , "id":15
-              , "name":"sigmoid_table"
-              , "debug":
-              [
-                [
-                  {
-                    "filename":"firmware/nnet_utils/sigmoid_table.tb"
-                    , "line":14
-                  }
-                ]
-              ]
-              , "details":
-              [
-                {
-                  "type":"table"
-                  , "details":
-                  [
-                    {
-                      "type":"brief"
-                      , "text":"1024B requested\n1024B implemented"
-                    }
-                  ]
-                  , "Requested size":"1024 bytes"
-                  , "Implemented size":"1024 bytes"
-                  , "Number of banks":"1"
-                  , "Bank width":"8192 bits"
-                  , "Bank depth":"1 word"
-                  , "Total replication":"1"
-                  , "Reference":
-                  [
-                    {
-                      "type":"text"
-                      , "text":"See %L for more information"
-                      , "links":
-                      [
-                        {
-                          "guide":"Reference Manual : Local Variables in Components"
-                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html#xzx1468871996419"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
             }
           ]
         }
@@ -299,7 +164,7 @@
         [
           {
             "filename":"firmware/myproject.cpp"
-            , "line":25
+            , "line":7
           }
         ]
       ]
@@ -307,9 +172,9 @@
       [
         {
           "type":"table"
-          , "Width":"160 bits"
+          , "Width":"320 bits"
           , "Depth":"0"
-          , "Bits per symbol":"160 bits"
+          , "Bits per symbol":"320 bits"
           , "Uses Packets":"No"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
@@ -320,14 +185,14 @@
     }
     , {
       "type":"stream"
-      , "id":10
+      , "id":8
       , "name":"return.myproject"
       , "debug":
       [
         [
           {
             "filename":"firmware/myproject.cpp"
-            , "line":25
+            , "line":7
           }
         ]
       ]
@@ -335,9 +200,9 @@
       [
         {
           "type":"table"
-          , "Width":"16 bits"
+          , "Width":"32 bits"
           , "Depth":"0"
-          , "Bits per symbol":"16 bits"
+          , "Bits per symbol":"32 bits"
           , "Uses Packets":"No"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
@@ -348,14 +213,14 @@
     }
     , {
       "type":"interface"
-      , "id":13
+      , "id":11
       , "name":"input_1"
       , "debug":
       [
         [
           {
             "filename":"firmware/myproject.cpp"
-            , "line":25
+            , "line":7
           }
         ]
       ]
@@ -364,7 +229,7 @@
         {
           "type":"table"
           , "Stable":"No"
-          , "Width":"160 bits"
+          , "Width":"320 bits"
           , "Component":"myproject"
         }
       ]
@@ -377,64 +242,36 @@
       , "to":5
     }
     , {
-      "from":9
-      , "to":10
-    }
-    , {
-      "from":13
-      , "to":5
-    }
-    , {
-      "from":15
+      "from":7
       , "to":8
-    }
-    , {
-      "from":7
-      , "to":15
-    }
-    , {
-      "from":12
-      , "to":11
-    }
-    , {
-      "from":3
-      , "to":11
-    }
-    , {
-      "from":5
-      , "to":12
-    }
-    , {
-      "from":7
-      , "to":12
-    }
-    , {
-      "from":8
-      , "to":12
-    }
-    , {
-      "from":9
-      , "to":12
     }
     , {
       "from":11
       , "to":5
     }
     , {
-      "from":5
-      , "to":7
+      "from":10
+      , "to":9
+    }
+    , {
+      "from":3
+      , "to":9
     }
     , {
       "from":5
-      , "to":8
+      , "to":10
     }
     , {
       "from":7
-      , "to":9
+      , "to":10
     }
     , {
-      "from":8
-      , "to":9
+      "from":9
+      , "to":5
+    }
+    , {
+      "from":5
+      , "to":7
     }
   ]
 }

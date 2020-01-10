@@ -12,7 +12,7 @@
         [
           {
             "filename":"firmware/myproject.cpp"
-            , "line":25
+            , "line":7
           }
         ]
       ]
@@ -79,7 +79,7 @@
                   [
                     {
                       "filename":"firmware/myproject.cpp"
-                      , "line":"25"
+                      , "line":"7"
                     }
                   ]
                 }
@@ -90,7 +90,7 @@
                   [
                     {
                       "filename":"firmware/myproject.cpp"
-                      , "line":"55"
+                      , "line":"434"
                     }
                   ]
                 }
@@ -135,36 +135,8 @@
               [
                 [
                   {
-                    "filename":"firmware/nnet_utils/nnet_activation.h"
-                    , "line":62
-                  }
-                ]
-              ]
-              , "details":
-              [
-                {
-                  "type":"brief"
-                  , "text":"Unrolled by #pragma unroll"
-                }
-                , {
-                  "type":"text"
-                  , "text":"Unrolled by #pragma unroll"
-                }
-              ]
-              , "children":
-              [
-              ]
-            }
-            , {
-              "name":"Fully unrolled loop"
-              , "data":
-              ["n/a", "n/a", "n/a"]
-              , "debug":
-              [
-                [
-                  {
-                    "filename":"firmware/nnet_utils/nnet_dense.h"
-                    , "line":58
+                    "filename":"firmware/myproject.cpp"
+                    , "line":410
                   }
                 ]
               ]
@@ -189,36 +161,8 @@
                   [
                     [
                       {
-                        "filename":"firmware/nnet_utils/nnet_dense.h"
-                        , "line":62
-                      }
-                    ]
-                  ]
-                  , "details":
-                  [
-                    {
-                      "type":"brief"
-                      , "text":"Unrolled by #pragma unroll"
-                    }
-                    , {
-                      "type":"text"
-                      , "text":"Unrolled by #pragma unroll"
-                    }
-                  ]
-                  , "children":
-                  [
-                  ]
-                }
-                , {
-                  "name":"Fully unrolled loop"
-                  , "data":
-                  ["n/a", "n/a", "n/a"]
-                  , "debug":
-                  [
-                    [
-                      {
-                        "filename":"firmware/nnet_utils/nnet_dense.h"
-                        , "line":62
+                        "filename":"firmware/myproject.cpp"
+                        , "line":413
                       }
                     ]
                   ]
@@ -247,8 +191,8 @@
               [
                 [
                   {
-                    "filename":"firmware/nnet_utils/nnet_dense.h"
-                    , "line":58
+                    "filename":"firmware/myproject.cpp"
+                    , "line":423
                   }
                 ]
               ]
@@ -265,6 +209,34 @@
               ]
               , "children":
               [
+                {
+                  "name":"Fully unrolled loop"
+                  , "data":
+                  ["n/a", "n/a", "n/a"]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"firmware/myproject.cpp"
+                        , "line":426
+                      }
+                    ]
+                  ]
+                  , "details":
+                  [
+                    {
+                      "type":"brief"
+                      , "text":"Unrolled by #pragma unroll"
+                    }
+                    , {
+                      "type":"text"
+                      , "text":"Unrolled by #pragma unroll"
+                    }
+                  ]
+                  , "children":
+                  [
+                  ]
+                }
               ]
             }
           ]

@@ -15,7 +15,7 @@
           [
             {
               "filename":"firmware/myproject.cpp"
-              , "line":25
+              , "line":7
             }
           ]
         ]
@@ -32,13 +32,13 @@
       {
         "name":"myproject"
         , "data":
-        [32287, 13058, 0, 57, 411]
+        [5063, 2520, 0, 55, 2]
         , "debug":
         [
           [
             {
               "filename":"firmware/myproject.cpp"
-              , "line":25
+              , "line":7
             }
           ]
         ]
@@ -48,9 +48,9 @@
         , "classes":
         ["summary-highlight", "nohover"]
         , "data":
-        [32287, 13058, 0, 57, 411]
+        [5063, 2520, 0, 55, 2]
         , "data_percent":
-        [3.77891, 0.764162, 0, 3.75494]
+        [0.59258, 0.147472, 0, 3.62319]
       }
       , {
         "name":"Available"

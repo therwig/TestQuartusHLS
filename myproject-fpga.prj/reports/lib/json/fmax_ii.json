@@ -25,7 +25,7 @@
       , "target_ii":"1"
       , "achieved_fmax":"200.0"
       , "achieved_ii":1
-      , "latency":21
+      , "latency":1
       , "max_interleaving":1
       , "is_fmax_bottleneck":"No"
       , "is_loop_header":"Yes"
@@ -58,7 +58,7 @@
       [
         {
           "filename":"firmware/myproject.cpp"
-          , "line":25
+          , "line":7
         }
       ]
       , "loop_hierachy":

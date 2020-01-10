@@ -22,21 +22,20 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "firmware/parameters.h"
 #include "firmware/myproject.h"
 
-#define Num_Invocation 10
+#define NTEST 10
 
 int main(int argc, char **argv)
 {
   // insert test data
-  hls_register inputdat input_1[Num_Invocation];
-  hls_register outputdat output_1[Num_Invocation];
+  hls_register inputdat input_1[NTEST];
+  hls_register outputdat output_1[NTEST];
 
-  for (int i = 0; i < Num_Invocation; ++i) {
-    for(int j = 0; j < N_INPUT_1; ++j) {
-      // zeros for now
-      input_1[i].data[j] = 0;
+  for (int i = 0; i < NTEST; ++i) {
+    for(int j = 0; j < NIN; ++j) {
+      // junk test data for now
+      input_1[i].data[j] = 0.3;
     }
     // run once for each test iteration
     ihc_hls_enqueue(&output_1[i], myproject, input_1[i]);
@@ -45,14 +44,14 @@ int main(int argc, char **argv)
 
 
   // check output
-  for (int i = 0; i < Num_Invocation; ++i) {
+  for (int i = 0; i < NTEST; ++i) {
     std::cout << "Input: ";
-    for(int j = 0; j < N_INPUT_1; j++) {
+    for(int j = 0; j < NIN; j++) {
       std::cout << input_1[i].data[j] << " ";
     }
     std::cout << ";";
     std::cout << "Output: ";
-    for(int j = 0; j < N_LAYER_4; j++) {
+    for(int j = 0; j < NOUT; j++) {
       std::cout << output_1[i].data[j] << " ";
     }
     std::cout << ";";

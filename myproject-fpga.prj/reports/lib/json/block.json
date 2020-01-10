@@ -1,11 +1,11 @@
 {
-  "2178128656":
+  "3841716464":
   {
     "nodes":
     [
       {
         "name":"?"
-        , "id":2191498256
+        , "id":3846160720
         , "details":
         [
           {
@@ -18,7 +18,7 @@
       }
       , {
         "name":"Feedback"
-        , "id":2191547952
+        , "id":3846360672
         , "details":
         [
           {
@@ -34,7 +34,7 @@
           [
             {
               "filename":"firmware/myproject.cpp"
-              , "line":25
+              , "line":7
             }
           ]
         ]
@@ -44,8 +44,8 @@
     , "links":
     [
       {
-        "from":2191547952
-        , "to":2191498256
+        "from":3846360672
+        , "to":3846160720
         , "reverse":1
         , "details":
         [
@@ -57,18 +57,18 @@
       }
     ]
   }
-  , "2178152752":
+  , "3841716656":
   {
     "nodes":
     [
       {
         "name":"Cluster 0"
-        , "id":2187826048
+        , "id":3845341824
         , "details":
         [
           {
             "type":"table"
-            , "Cluster Name":"i_sfc_s_c0_in_wt_entry_myprojects_c0_enter1_myproject7"
+            , "Cluster Name":"i_sfc_s_c0_in_wt_entry_myprojects_c0_enter1_myproject6"
             , "Cluster Type":"Stall-Enable"
             , "Cluster Latency":"0"
           }
@@ -78,12 +78,12 @@
         [
           {
             "name":"Logic"
-            , "id":2187832624
+            , "id":3845348624
             , "details":
             [
               {
                 "type":"table"
-                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_myprojects_c0_enter1_myproject7"
+                , "Cluster Name":"i_sfc_s_c0_in_wt_entry_myprojects_c0_enter1_myproject6"
                 , "Cluster Type":"Stall-Enable"
                 , "Cluster Latency":"0"
               }
@@ -94,14 +94,14 @@
       }
       , {
         "name":"Cluster 1"
-        , "id":2188099328
+        , "id":3845604752
         , "details":
         [
           {
             "type":"table"
-            , "Cluster Name":"i_sfc_s_c1_in_wt_entry_myprojects_c1_enter_myproject25"
+            , "Cluster Name":"i_sfc_s_c1_in_wt_entry_myprojects_c1_enter_myproject22"
             , "Cluster Type":"Stall-Free"
-            , "Cluster Latency":"17"
+            , "Cluster Latency":"10"
           }
         ]
         , "type":"bb"
@@ -109,27 +109,27 @@
         [
           {
             "name":"Logic"
-            , "id":2188105616
+            , "id":3845612944
             , "details":
             [
               {
                 "type":"table"
-                , "Cluster Name":"i_sfc_s_c1_in_wt_entry_myprojects_c1_enter_myproject25"
+                , "Cluster Name":"i_sfc_s_c1_in_wt_entry_myprojects_c1_enter_myproject22"
                 , "Cluster Type":"Stall-Free"
-                , "Cluster Latency":"17"
+                , "Cluster Latency":"10"
               }
             ]
             , "type":"inst"
           }
           , {
             "name":"Exit"
-            , "id":2193285168
+            , "id":3846406144
             , "details":
             [
               {
                 "type":"table"
-                , "Exit FIFO Depth":"32"
-                , "Exit FIFO Width":"32"
+                , "Exit FIFO Depth":"16"
+                , "Exit FIFO Width":"64"
                 , "Details":"Exit FIFO depth is sized to accommodate all data that may be in-flight in the stall-free cluster; this depth will be equal to or greater than the latency of the cluster.  The width of the FIFO depends on the amount of data that needs to pass from the stall-free logic cluster to the stall-able logic below it."
               }
             ]
@@ -138,41 +138,14 @@
         ]
       }
       , {
-        "name":"WR"
-        , "id":2191468976
-        , "details":
-        [
-          {
-            "type":"table"
-            , "Instruction":"Stream Write"
-            , "Width":"16 bits"
-            , "Depth":"0"
-            , "Channel Name":"return.myproject"
-            , "Start Cycle":"21"
-            , "Latency":"0"
-            , "Stall-free":"No"
-          }
-        ]
-        , "debug":
-        [
-          [
-            {
-              "filename":"firmware/myproject.cpp"
-              , "line":55
-            }
-          ]
-        ]
-        , "type":"inst"
-      }
-      , {
         "name":"RD"
-        , "id":2191548288
+        , "id":3846170896
         , "details":
         [
           {
             "type":"table"
             , "Instruction":"Stream Read"
-            , "Width":"160 bits"
+            , "Width":"320 bits"
             , "Depth":"0"
             , "Channel Name":"do.myproject"
             , "Start Cycle":"1"
@@ -185,22 +158,36 @@
           [
             {
               "filename":"firmware/myproject.cpp"
-              , "line":25
+              , "line":7
             }
           ]
         ]
         , "type":"inst"
       }
       , {
-        "name":"Loop Input"
-        , "id":2191577904
+        "name":"WR"
+        , "id":3846239856
         , "details":
         [
           {
             "type":"table"
-            , "Instruction":"Loop Input"
-            , "Preceding Blocks":"myproject.B1.start, myproject.B0.runOnce"
+            , "Instruction":"Stream Write"
+            , "Width":"32 bits"
+            , "Depth":"0"
+            , "Channel Name":"return.myproject"
+            , "Start Cycle":"14"
+            , "Latency":"0"
+            , "Stall-free":"No"
           }
+        ]
+        , "debug":
+        [
+          [
+            {
+              "filename":"firmware/myproject.cpp"
+              , "line":434
+            }
+          ]
         ]
         , "type":"inst"
       }
@@ -208,39 +195,28 @@
     , "links":
     [
       {
-        "from":2188105616
-        , "to":2193285168
+        "from":3845612944
+        , "to":3846406144
       }
       , {
-        "from":2193285168
-        , "to":2191468976
+        "from":3846170896
+        , "to":3845612944
         , "details":
         [
           {
             "type":"table"
-            , "Width":"32"
+            , "Width":"320"
           }
         ]
       }
       , {
-        "from":2191548288
-        , "to":2188105616
+        "from":3846406144
+        , "to":3846239856
         , "details":
         [
           {
             "type":"table"
-            , "Width":"160"
-          }
-        ]
-      }
-      , {
-        "from":2191577904
-        , "to":2187832624
-        , "details":
-        [
-          {
-            "type":"table"
-            , "Width":"1"
+            , "Width":"64"
           }
         ]
       }

@@ -2,205 +2,15 @@
   "nodes":
   [
     {
-      "type":"component"
-      , "id":2
-      , "name":"myproject"
-      , "children":
-      [
-        {
-          "type":"inst"
-          , "id":7
-          , "name":"Store"
-          , "debug":
-          [
-            [
-              {
-                "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                , "line":443
-              }
-            ]
-          ]
-          , "details":
-          [
-            {
-              "type":"table"
-              , "Width":"8192 bits"
-              , "Type":"Local-pipelined never-stall"
-              , "Stall-free":"Yes"
-              , "Stores to":"sigmoid_table"
-              , "Start Cycle":"13"
-              , "Latency":"1"
-              , "Reference":
-              [
-                {
-                  "type":"text"
-                  , "text":"See %L for more information"
-                  , "links":
-                  [
-                    {
-                      "guide":"Reference Manual"
-                      , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-        , {
-          "type":"inst"
-          , "id":8
-          , "name":"Load"
-          , "debug":
-          [
-            [
-              {
-                "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                , "line":277
-              }
-            ]
-          ]
-          , "details":
-          [
-            {
-              "type":"table"
-              , "Width":"16 bits"
-              , "Type":"Local-pipelined never-stall"
-              , "Stall-free":"Yes"
-              , "Loads from":"sigmoid_table"
-              , "Start Cycle":"14"
-              , "Latency":"3"
-              , "Reference":
-              [
-                {
-                  "type":"text"
-                  , "text":"See %L for more information"
-                  , "links":
-                  [
-                    {
-                      "guide":"Reference Manual"
-                      , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-        , {
-          "type":"memtype"
-          , "id":14
-          , "name":"Local Memory"
-          , "children":
-          [
-            {
-              "type":"memsys"
-              , "id":15
-              , "name":"sigmoid_table"
-              , "debug":
-              [
-                [
-                  {
-                    "filename":"firmware/nnet_utils/sigmoid_table.tb"
-                    , "line":14
-                  }
-                ]
-              ]
-              , "children":
-              [
-                {
-                  "type":"bank"
-                  , "id":16
-                  , "name":"Bank 0"
-                  , "debug":
-                  [
-                    [
-                      {
-                        "filename":"firmware/nnet_utils/sigmoid_table.tb"
-                        , "line":14
-                      }
-                    ]
-                  ]
-                  , "children":
-                  [
-                    {
-                      "type":"port"
-                      , "id":17
-                      , "name":"R"
-                    }
-                    , {
-                      "type":"port"
-                      , "id":18
-                      , "name":"W"
-                    }
-                  ]
-                  , "details":
-                  [
-                    {
-                      "type":"table"
-                      , "details":
-                      [
-                        {
-                          "type":"brief"
-                          , "text":"2 total ports/bank\n1 read ports/bank\n1 write ports/bank"
-                        }
-                      ]
-                      , "Total number of ports per bank":"2"
-                      , "Number of read ports per bank":"1"
-                      , "Number of write ports per bank":"1"
-                      , "Total replication":"1"
-                    }
-                  ]
-                }
-              ]
-              , "details":
-              [
-                {
-                  "type":"table"
-                  , "details":
-                  [
-                    {
-                      "type":"brief"
-                      , "text":"1024B requested\n1024B implemented"
-                    }
-                  ]
-                  , "Requested size":"1024 bytes"
-                  , "Implemented size":"1024 bytes"
-                  , "Number of banks":"1"
-                  , "Bank width":"8192 bits"
-                  , "Bank depth":"1 word"
-                  , "Total replication":"1"
-                  , "Reference":
-                  [
-                    {
-                      "type":"text"
-                      , "text":"See %L for more information"
-                      , "links":
-                      [
-                        {
-                          "guide":"Reference Manual : Local Variables in Components"
-                          , "link":"https://www.intel.com/content/www/us/en/programmable/documentation/ewa1462824960255.html#xzx1468871996419"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    , {
       "type":"interface"
-      , "id":13
+      , "id":11
       , "name":"input_1"
       , "debug":
       [
         [
           {
             "filename":"firmware/myproject.cpp"
-            , "line":25
+            , "line":7
           }
         ]
       ]
@@ -209,7 +19,7 @@
         {
           "type":"table"
           , "Stable":"No"
-          , "Width":"160 bits"
+          , "Width":"320 bits"
           , "Component":"myproject"
         }
       ]
@@ -217,13 +27,5 @@
   ]
   , "links":
   [
-    {
-      "from":17
-      , "to":8
-    }
-    , {
-      "from":7
-      , "to":18
-    }
   ]
 }

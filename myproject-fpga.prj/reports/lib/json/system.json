@@ -3,19 +3,19 @@
   [
     {
       "name":"myproject"
-      , "id":2178031112
+      , "id":3841627304
       , "type":"component"
       , "children":
       [
         {
-          "name":"Stream Write"
-          , "id":2179681320
+          "name":"Stream Read"
+          , "id":3842199288
           , "details":
           [
             {
               "type":"table"
               , "Basic Block":"myproject.B1.start"
-              , "Width":"16 bits"
+              , "Width":"320 bits"
               , "Depth":"0"
               , "Stall-free":"No"
               , "Latency":"0"
@@ -26,21 +26,21 @@
             [
               {
                 "filename":"firmware/myproject.cpp"
-                , "line":55
+                , "line":7
               }
             ]
           ]
           , "type":"inst"
         }
         , {
-          "name":"Stream Read"
-          , "id":2178986760
+          "name":"Stream Write"
+          , "id":3842216232
           , "details":
           [
             {
               "type":"table"
               , "Basic Block":"myproject.B1.start"
-              , "Width":"160 bits"
+              , "Width":"32 bits"
               , "Depth":"0"
               , "Stall-free":"No"
               , "Latency":"0"
@@ -51,7 +51,7 @@
             [
               {
                 "filename":"firmware/myproject.cpp"
-                , "line":25
+                , "line":434
               }
             ]
           ]
@@ -61,15 +61,15 @@
     }
     , {
       "name":"do.myproject"
-      , "id":2178013720
+      , "id":3841630600
       , "details":
       [
         {
           "type":"table"
-          , "Width":"160 bits"
+          , "Width":"320 bits"
           , "Depth":"0"
           , "Reday Latency":"0"
-          , "Bits per Symbol":"160 bits"
+          , "Bits per Symbol":"320 bits"
           , "Uses Packets":"No"
           , "Uses Valid":"Yes"
           , "Uses Empty":"No"
@@ -80,15 +80,15 @@
     }
     , {
       "name":"return.myproject"
-      , "id":2178015976
+      , "id":3841630728
       , "details":
       [
         {
           "type":"table"
-          , "Width":"16 bits"
+          , "Width":"32 bits"
           , "Depth":"0"
           , "Ready Latency":"0"
-          , "Bits per Symbol":"16 bits"
+          , "Bits per Symbol":"32 bits"
           , "Uses Packets":"No"
           , "Uses Ready":"Yes"
           , "Uses Empty":"No"
@@ -101,16 +101,16 @@
   , "links":
   [
     {
-      "from":2178013720
-      , "to":2178986760
+      "from":3841630600
+      , "to":3842199288
     }
     , {
-      "from":2179681320
-      , "to":2178015976
+      "from":3842216232
+      , "to":3841630728
     }
     , {
-      "from":2178986760
-      , "to":2179681320
+      "from":3842199288
+      , "to":3842216232
     }
   ]
 }

@@ -1,36 +1,29 @@
-//
-//    rfnoc-hls-neuralnet: Vivado HLS code for neural-net building blocks
-//
-//    Copyright (C) 2017 EJ Kreinar
-//
-//    This program is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-
 #ifndef MYPROJECT_H_
 #define MYPROJECT_H_
 
-#include "HLS/hls.h"
-#include <complex>
+#ifndef __INTELFPGA_COMPILER__
+#include "ref/ac_int.h"
+#include "ref/ac_fixed.h"
+#else
+#include "HLS/ac_int.h"
+#include "HLS/ac_fixed.h"
+#endif
 
-#include "parameters.h"
+#include "HLS/hls.h"
+
+// use a single type for now
+typedef ac_fixed<26,6> type_t;
+
+#define NIN 10
+#define NL1 5
+#define NOUT 1
 
 struct inputdat {
-    input_t data[N_INPUT_1];
+    type_t data[NIN];
 };
 
 struct outputdat {
-    result_t data[N_LAYER_4];
+    type_t data[NOUT];
 };
 
 
