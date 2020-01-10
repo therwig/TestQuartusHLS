@@ -3,44 +3,19 @@
   [
     {
       "name":"myproject"
-      , "id":3841627304
+      , "id":3489319400
       , "type":"component"
       , "children":
       [
         {
-          "name":"Stream Read"
-          , "id":3842199288
-          , "details":
-          [
-            {
-              "type":"table"
-              , "Basic Block":"myproject.B1.start"
-              , "Width":"320 bits"
-              , "Depth":"0"
-              , "Stall-free":"No"
-              , "Latency":"0"
-            }
-          ]
-          , "debug":
-          [
-            [
-              {
-                "filename":"firmware/myproject.cpp"
-                , "line":7
-              }
-            ]
-          ]
-          , "type":"inst"
-        }
-        , {
           "name":"Stream Write"
-          , "id":3842216232
+          , "id":3489889672
           , "details":
           [
             {
               "type":"table"
               , "Basic Block":"myproject.B1.start"
-              , "Width":"32 bits"
+              , "Width":"16 bits"
               , "Depth":"0"
               , "Stall-free":"No"
               , "Latency":"0"
@@ -57,21 +32,46 @@
           ]
           , "type":"inst"
         }
+        , {
+          "name":"Stream Read"
+          , "id":3489901400
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"myproject.B1.start"
+              , "Width":"160 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"firmware/myproject.cpp"
+                , "line":7
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
       ]
     }
     , {
-      "name":"do.myproject"
-      , "id":3841630600
+      "name":"return.myproject"
+      , "id":3489319192
       , "details":
       [
         {
           "type":"table"
-          , "Width":"320 bits"
+          , "Width":"16 bits"
           , "Depth":"0"
-          , "Reday Latency":"0"
-          , "Bits per Symbol":"320 bits"
+          , "Ready Latency":"0"
+          , "Bits per Symbol":"16 bits"
           , "Uses Packets":"No"
-          , "Uses Valid":"Yes"
+          , "Uses Ready":"Yes"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
         }
@@ -79,18 +79,18 @@
       , "type":"stream"
     }
     , {
-      "name":"return.myproject"
-      , "id":3841630728
+      "name":"do.myproject"
+      , "id":3489321224
       , "details":
       [
         {
           "type":"table"
-          , "Width":"32 bits"
+          , "Width":"160 bits"
           , "Depth":"0"
-          , "Ready Latency":"0"
-          , "Bits per Symbol":"32 bits"
+          , "Reday Latency":"0"
+          , "Bits per Symbol":"160 bits"
           , "Uses Packets":"No"
-          , "Uses Ready":"Yes"
+          , "Uses Valid":"Yes"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
         }
@@ -101,16 +101,16 @@
   , "links":
   [
     {
-      "from":3841630600
-      , "to":3842199288
+      "from":3489889672
+      , "to":3489319192
     }
     , {
-      "from":3842216232
-      , "to":3841630728
+      "from":3489321224
+      , "to":3489901400
     }
     , {
-      "from":3842199288
-      , "to":3842216232
+      "from":3489901400
+      , "to":3489889672
     }
   ]
 }

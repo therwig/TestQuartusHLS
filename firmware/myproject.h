@@ -12,7 +12,7 @@
 #include "HLS/hls.h"
 
 // use a single type for now
-typedef ac_fixed<26,6> type_t;
+typedef ac_fixed<16,6> type_t;
 
 #define NIN 10
 #define NL1 5

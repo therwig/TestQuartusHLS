@@ -4,9 +4,9 @@
   , "debug_enabled":"true"
   , "type":"module"
   , "total_percent":
-  [0.665113, 0.597261, 0.147472, 0, 3.62319]
+  [0.667605, 0.611306, 0.138986, 0, 0.263505]
   , "total":
-  [5063, 2520, 0, 55, 2]
+  [5203, 2375, 0, 4, 1]
   , "name":"System"
   , "max_resources":
   [854400, 1708800, 2713, 1518, 42720]
@@ -17,9 +17,9 @@
       , "compute_units":1
       , "type":"function"
       , "total_percent":
-      [0.665113, 0.597261, 0.147472, 0, 3.62319]
+      [0.667605, 0.611306, 0.138986, 0, 0.263505]
       , "total_kernel_resources":
-      [5063, 2520, 0, 55, 2]
+      [5203, 2375, 0, 4, 1]
       , "details":
       [
         {
@@ -42,11 +42,11 @@
           [
             {
               "type":"text"
-              , "text":"Stream implemented 320 bits wide with a buffer size of 0 elements."
+              , "text":"Stream implemented 160 bits wide with a buffer size of 0 elements."
             }
             , {
               "type":"brief"
-              , "text":"320b wide with 0 elements."
+              , "text":"160b wide with 0 elements."
             }
           ]
         }
@@ -59,11 +59,11 @@
           [
             {
               "type":"text"
-              , "text":"Stream implemented 32 bits wide with a buffer size of 0 elements."
+              , "text":"Stream implemented 16 bits wide with a buffer size of 0 elements."
             }
             , {
               "type":"brief"
-              , "text":"32b wide with 0 elements."
+              , "text":"16b wide with 0 elements."
             }
           ]
         }
@@ -76,7 +76,7 @@
               "name":"State"
               , "type":"resource"
               , "data":
-              [239, 2506, 0, 0, 0]
+              [60, 1577, 0, 0, 0]
               , "details":
               [
                 {
@@ -109,7 +109,7 @@
                   "name":"No Source Line"
                   , "type":"resource"
                   , "data":
-                  [239, 2506, 0, 0, 0]
+                  [60, 1577, 0, 0, 0]
                 }
               ]
             }
@@ -159,7 +159,7 @@
               "name":"Cluster logic"
               , "type":"resource"
               , "data":
-              [7, 5, 0, 0, 2]
+              [7, 5, 0, 0, 1]
               , "details":
               [
                 {
@@ -204,10 +204,44 @@
                   , "replace_name":"true"
                 }
                 , {
+                  "name":"myproject.cpp:414 > ac_fixed.h:603 > \nac_int.h:646"
+                  , "type":"resource"
+                  , "data":
+                  [384, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"firmware/myproject.cpp"
+                        , "line":414
+                      }
+                      , {
+                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
+                        , "line":603
+                      }
+                      , {
+                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
+                        , "line":646
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"32-bit Integer Add"
+                      , "type":"resource"
+                      , "count":25
+                      , "data":
+                      [384, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
                   "name":"myproject.cpp:414 > ac_fixed.h:603 > \nac_int.h:647"
                   , "type":"resource"
                   , "data":
-                  [3016, 0, 0, 50, 0]
+                  [3523, 686, 0, 2.5, 0]
                   , "debug":
                   [
                     [
@@ -228,11 +262,18 @@
                   , "children":
                   [
                     {
-                      "name":"52-bit Integer Multiply"
+                      "name":"32-bit Integer Add"
                       , "type":"resource"
-                      , "count":50
+                      , "count":25
                       , "data":
-                      [3016, 0, 0, 50, 0]
+                      [384, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"32-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":36
+                      , "data":
+                      [3139, 686, 0, 2.5, 0]
                     }
                   ]
                   , "replace_name":"true"
@@ -241,7 +282,7 @@
                   "name":"myproject.cpp:415 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:652"
                   , "type":"resource"
                   , "data":
-                  [1300, 0, 0, 0, 0]
+                  [800, 0, 0, 0, 0]
                   , "debug":
                   [
                     [
@@ -266,11 +307,11 @@
                   , "children":
                   [
                     {
-                      "name":"26-bit Integer Add"
+                      "name":"16-bit Integer Add"
                       , "type":"resource"
                       , "count":50
                       , "data":
-                      [1300, 0, 0, 0, 0]
+                      [800, 0, 0, 0, 0]
                     }
                   ]
                   , "replace_name":"true"
@@ -279,7 +320,7 @@
                   "name":"myproject.cpp:427 > ac_fixed.h:603 > \nac_int.h:647"
                   , "type":"resource"
                   , "data":
-                  [358, 0, 0, 5, 0]
+                  [336, 98, 0, 1.5, 0]
                   , "debug":
                   [
                     [
@@ -300,11 +341,11 @@
                   , "children":
                   [
                     {
-                      "name":"52-bit Integer Multiply"
+                      "name":"32-bit Integer Multiply"
                       , "type":"resource"
                       , "count":5
                       , "data":
-                      [358, 0, 0, 5, 0]
+                      [336, 98, 0, 1.5, 0]
                     }
                   ]
                   , "replace_name":"true"
@@ -313,7 +354,7 @@
                   "name":"myproject.cpp:428 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:652"
                   , "type":"resource"
                   , "data":
-                  [130, 0, 0, 0, 0]
+                  [80, 0, 0, 0, 0]
                   , "debug":
                   [
                     [
@@ -338,11 +379,11 @@
                   , "children":
                   [
                     {
-                      "name":"26-bit Integer Add"
+                      "name":"16-bit Integer Add"
                       , "type":"resource"
                       , "count":5
                       , "data":
-                      [130, 0, 0, 0, 0]
+                      [80, 0, 0, 0, 0]
                     }
                   ]
                   , "replace_name":"true"

@@ -3,31 +3,31 @@
   [
     {
       "name":"myproject"
-      , "id":3841627304
+      , "id":3489319400
       , "type":"component"
       , "children":
       [
         {
           "name":"myproject.B1.start"
-          , "id":3841716656
+          , "id":3489406400
           , "type":"bb"
           , "children":
           [
             {
               "name":"Cluster 0"
-              , "id":3845341824
+              , "id":3493157296
               , "type":"cluster"
             }
             , {
               "name":"Cluster 1"
-              , "id":3845604752
+              , "id":3493420256
               , "type":"cluster"
             }
           ]
         }
         , {
           "name":"myproject.B0.runOnce"
-          , "id":3841716464
+          , "id":3489406208
           , "type":"bb"
         }
       ]

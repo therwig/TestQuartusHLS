@@ -5,7 +5,7 @@ var verifJSON={
     {
       "name":"myproject"
       , "data":
-      ['10', '13,13,13', '1,1,1']
+      ['10', '12,12,12', '1,1,1']
       , "details":
       [
         "Click for details"
@@ -41,7 +41,7 @@ var verifJSON={
     {
       "name":"Enqueued component invocations"
       , "data":
-      ['10', '13,13,13', '1,1,1']
+      ['10', '12,12,12', '1,1,1']
       , "details":
       [
         "Click for details"

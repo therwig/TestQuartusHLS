@@ -42,7 +42,7 @@
               [
                 {
                   "type":"table"
-                  , "Width":"320 bits"
+                  , "Width":"160 bits"
                   , "Depth":"0"
                   , "Stall-free":"No"
                   , "Start Cycle":"1"
@@ -81,10 +81,10 @@
               [
                 {
                   "type":"table"
-                  , "Width":"32 bits"
+                  , "Width":"16 bits"
                   , "Depth":"0"
                   , "Stall-free":"No"
-                  , "Start Cycle":"14"
+                  , "Start Cycle":"13"
                   , "Latency":"0"
                   , "Reference":
                   [
@@ -172,9 +172,9 @@
       [
         {
           "type":"table"
-          , "Width":"320 bits"
+          , "Width":"160 bits"
           , "Depth":"0"
-          , "Bits per symbol":"320 bits"
+          , "Bits per symbol":"160 bits"
           , "Uses Packets":"No"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
@@ -200,9 +200,9 @@
       [
         {
           "type":"table"
-          , "Width":"32 bits"
+          , "Width":"16 bits"
           , "Depth":"0"
-          , "Bits per symbol":"32 bits"
+          , "Bits per symbol":"16 bits"
           , "Uses Packets":"No"
           , "Uses Empty":"No"
           , "First symbol in high order bits":"No"
@@ -229,7 +229,7 @@
         {
           "type":"table"
           , "Stable":"No"
-          , "Width":"320 bits"
+          , "Width":"160 bits"
           , "Component":"myproject"
         }
       ]

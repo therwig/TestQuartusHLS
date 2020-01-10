@@ -19,7 +19,7 @@
         {
           "type":"table"
           , "Stable":"No"
-          , "Width":"320 bits"
+          , "Width":"160 bits"
           , "Component":"myproject"
         }
       ]
