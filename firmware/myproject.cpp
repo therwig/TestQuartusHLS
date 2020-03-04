@@ -58,20 +58,20 @@ component outputdat myproject(
                                       -0.047084681690,
                                       -0.061241794378,
                                       -0.344885140657,
-    };//32*10
+    };
     hls_init_on_powerup static const type_t w2[((NOUT)*(NL1))] = {-1.130043148994,
                                        -0.614738821983,
                                        -0.818155288696,
                                        -0.154053628445,
                                        0.280428349972,
-    };//32
+    };
     hls_init_on_powerup static const type_t b1[NL1] = {0.842707276344,
                             0.790710926056,
                             0.649383246899,
                             0.070417419076,
                             0.408660680056,
-    }; //32
-    hls_init_on_powerup static const type_t b2[NOUT] = {0.098531961441}; //1
+    };
+    hls_init_on_powerup static const type_t b2[NOUT] = {0.098531961441}; 
 
     inputdat layer_1;
 

@@ -15,11 +15,28 @@ var UNTRACK_DIV = GRAPH_MESSAGE_PREFIX + "Variable implementation type could not
 var NO_NODES_DIV = GRAPH_MESSAGE_PREFIX + "No nodes to render for this graph." + GRAPH_MESSAGE_SUFFIX;
 var SELECT_GRAPH_DIV = GRAPH_MESSAGE_PREFIX + "Select a graph to display." + GRAPH_MESSAGE_SUFFIX;
 
-var GRAPH_CONST = {
-    CSPV: { name: "cspv_graph", elemId: "cspg",  gid: "GVG"  },  // TODO: merge with GV
-    LMEM: { name: "lmem_graph", elemId: "lmemg", gid: "LMEMG" },
-    GV:   { name: "gv_graph",   elemId: "gvg",   gid: "GVG"   }
+// constants for adding views to the system viewers
+// type is temporary until the rendering option is exposed at the function level
+var VIEWER_CONST = {
+    CSPV: { name: "cspv_graph", elemId: "cspg",  gid: "GVG"  , type:"CSPV" },  // TODO: merge with GV
+    LMEM: { name: "lmem_graph", elemId: "lmemg", gid: "LMEMG", type:"LMEM" },
+    SV:   { name: "sv_chart",   elemId: "svc",   gid: "SVC",   type:"SV"   }, // Schedule Viewer
+    GV:   { name: "gv_graph",   elemId: "gvg",   gid: "GVG",   type:"GV"   }  // Graph Viewer
 };
+
+// Converstion function from global view to viewer constants
+function getViewerConst(){
+  switch (view) {
+    case VIEWS.LMEM:
+      return VIEWER_CONST["LMEM"];
+    case VIEWS.GV:
+      return VIEWER_CONST["GV"];
+    case VIEWS.SCHEDULE:
+      return VIEWER_CONST["SV"];
+  }
+  return undefined;
+}
+
 // Graph variables
 var gv_graph;
 var lmem_graph;
@@ -36,8 +53,7 @@ var isEdge = !isIE && !!window.StyleMedia;
  *
  * Arguments:
  *  mavData    : the data to be rendered
- *  graphType  : allowed values are [CSPV|LMEM|EMEM|GV]. Values same as GRAPH_CONST
- *               use to set graph name, element ID, and GID
+ *  graphConstObj: Constant values from VIEWER_CONST use to set graph name, element ID, and GID
  * Optional arguments to graph filter flags. Right now, they are only for local memory
  *  kernelName : CSPV, name of component - TO BE OBSELETED with new schema
  *  lmemName   : LMEM, name of memsys    - TO BE OBSELETED with new schema
@@ -56,7 +72,12 @@ var isEdge = !isIE && !!window.StyleMedia;
  *  direction  : 
  *  width      :
  */
-function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName, replFlag) {
+function StartGraph(mavData, graphConstObj, kernelName, lmemName, bankList, bankName, replFlag) {
+    // HTML ID's
+    let GID = '#' + graphConstObj.gid;
+    let elemId = graphConstObj.elemId;
+    let graph = graphConstObj.name;
+    let graphType = graphConstObj.type;
 
     // Graph filter flag
     var uniqueFlag = true;
@@ -139,17 +160,34 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
     }
     createLinks(allLinks);  // Also flips the direction of arrow for backedges and Loads to help rendering
 
+    patchLatency();
+
     // Create the renderer
     var spgRenderer = new dagreD3.render();
 
     // Render the graph
-    spgRenderer(d3.select("#" + GRAPH_CONST[graphType].elemId + " g"), spg);
+    spgRenderer(d3.select("#" + elemId + " g"), spg);
 
     // Setup the graph
     setupGraph();
 
     // FUNCTIONS
     // --------------------------------------------------------------------------------------------
+
+    function patchLatency() {
+        Object.keys(flattenedNodes).filter(function(n) {
+            return (flattenedNodes[n].type === 'bb');
+        }).forEach(function (bb) {
+            var details = getDetails(flattenedNodes[bb]);
+            Object.keys(details).forEach(function (d) {
+                if (d === "Latency") {
+                    var blockLatency = findLatency(flattenedNodes[bb].name);
+                    var latency_str = (blockLatency < 0) ? "Unknown" : blockLatency.toString();  // Error handling
+                    details[d] = latency_str;
+                }
+            });
+        });
+    }
 
     // Print nodes and links to console
     function printNodesAndLinks() {
@@ -192,8 +230,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
         d3.selectAll("#graph_message").remove();
         // Add graph canvas
         var width = (graphType == "LMEM") ? 1000 : 2000;
-        var elemId = GRAPH_CONST[graphType].elemId;
-        d3.select("#" + GRAPH_CONST[graphType].gid)
+        d3.select(GID)
           .append("svg")
           .attr("id", elemId)
           .attr("width", width);
@@ -412,7 +449,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
               nodeMap[key].visible = true;
               return;
             }
-            if (nodeMap[key].type == "channel" || nodeMap[key].type == "stream") {
+            if (nodeMap[key].type == "channel" || nodeMap[key].type == "pipe" || nodeMap[key].type == "stream") {
                 read = {};
                 write = {};
                 rLink = {};
@@ -700,21 +737,33 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
 
     // Add tooltips to display details
     function addToolTips(graph) {
+        // Returns HTML formated. TODO: should be refactored with details
         var tt = function (n) {
             var name = "";
-            if (flattenedNodes[n].type == "channel" || flattenedNodes[n].type == "stream") name += flattenedNodes[n].type + " ";
+            if (flattenedNodes[n].type === "channel" || flattenedNodes[n].type === "pipe" || flattenedNodes[n].type === "stream") {
+              // Safe guard to show pipe wording for SYCL
+              if (product === PRODUCTS.SYCL && flattenedNodes[n].type === "channel") {
+                flattenedNodes[n].type = flattenedNodes[n].type.replace("channel", "pipe");
+              }
+              name += flattenedNodes[n].type + " ";
+            }
 
-            name += flattenedNodes[n].name;
+            // Safe guard to show pipe wording for SYCL
+            if  (product === PRODUCTS.SYCL && flattenedNodes[n].name.includes("Channel")) {
+              flattenedNodes[n].name = flattenedNodes[n].name.replace("Channel", "Pipe");
+            }
+            name += getHTMLName(flattenedNodes[n].name);
 
             if (flattenedNodes[n].count && flattenedNodes[n].count > 1) name += " (x" + flattenedNodes[n].count + ")";
 
-            var text = "<p class='name'>" + name + " Info</p><p class='description'>";
+            var text = "<h6 class=\"card-title custom_tooltip\">" + name + "</h6><p class=\"card-text\">";
             var details = getDetails(flattenedNodes[n]);
             Object.keys(details).filter(function(d) {
                 return (d.indexOf("Address bit information") === -1) && (d.indexOf("Memory layout information") === -1) &&
                        (d.indexOf("Memory word address pattern") === -1);
             }).forEach(function (k) {
                 if (typeof details[k] !== "string" && typeof details[k] !== "number") return;
+                if (details[k] === "") return;  // empty string
                 if (!(hiddenDetails[k]) && !(k.indexOf("Arguments from") != -1 && k.indexOf(kernelName) == -1)) {
                     text += k + ": " + details[k] + "<br>";
                 }
@@ -729,11 +778,15 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
                 return (flattenedNodes[d] && getDetails(flattenedNodes[d]));
             })
             .style("fill", "white")
-            .attr("title", function (d) { return tt(d); })
-            .each(function (v) { $(this).tooltip({ content: function() {return $(this).attr('title');}, tooltipClass: "custom_tooltip", position: {my: "left bottom", at: "center top-2"} }); }); 
+            .attr({
+              "title": function (d) { return tt(d); },
+              "data-html": "true",
+              "data-placement": "right"
+             })
+            .each(function (v) { $(this).tooltip({ content: function() {return $(this).attr('title');}, position: {my: "left bottom", at: "center top-2"} }); }); 
 
         var ee = function (n) {
-          var text = "<p class='description'>";
+          var text = "<p class=\"card-text\">";
           var item;
           for (var i = 0; i < flattenedLinks[n.v].length; i++) {
             if ("_"+flattenedLinks[n.v][i].from == n.v && "_"+flattenedLinks[n.v][i].to == n.w) {
@@ -761,8 +814,12 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
             }
             return false;
           })
-          .attr("title", function (d) { return ee(d); })
-          .each(function (v) { $(this).tooltip({ content: function() {return $(this).attr('title');}, tooltipClass: "custom_tooltip", position: {my: "left bottom", at: "center top-2"} }); }); 
+          .attr({
+            "title": function (d) { return ee(d); },
+            "data-html": "true",
+            "data-placement": "right"
+          })
+          .each(function (v) { $(this).tooltip({ content: function() {return $(this).attr('title');}, position: {my: "left bottom", at: "center top-2"} }); }); 
     }
 
     // Return true if node is merge or branch
@@ -945,8 +1002,10 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
         // Color channel connections
         var channelConnections = connections.filter(function (k) {
             return (flattenedNodes[k.v].type == "channel" ||
+                flattenedNodes[k.v].type == "pipe" ||
                 flattenedNodes[k.v].type == "stream" ||
                 flattenedNodes[k.w].type == "channel" ||
+                flattenedNodes[k.w].type == "pipe" ||
                 flattenedNodes[k.w].type == "stream" ||
                 flattenedNodes[k.v].type == "interface");
         });
@@ -1061,8 +1120,6 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
         // Adjust the size of the window before getting the pane dimensions to get accurate scaling
         adjustToWindowEvent();
 
-        var GID = "#" + GRAPH_CONST[graphType].gid;
-
         panelWidth = $(GID)[0].getBoundingClientRect().width - 2 * marginOffset;
         panelHeight = $(GID)[0].getBoundingClientRect().height - 2 * marginOffset;
 
@@ -1083,9 +1140,6 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
         }
             
         zoom = d3.behavior.zoom().scaleExtent(zoom_range).on("zoom", function () {
-        
-            var GID = "#" + GRAPH_CONST[graphType].gid;
-
             var panelWidth = $(GID)[0].getBoundingClientRect().width - 2 * marginOffset;
             var panelHeight = $(GID)[0].getBoundingClientRect().height - 2 * marginOffset;
             
@@ -1441,7 +1495,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
                     }
 
                     isInst = true;
-                } else if (n.type == "channel" || n.type == "stream" || n.type == "interface") {
+                } else if (n.type == "channel" || n.type == "pipe" || n.type == "stream" || n.type == "interface") {
                     if (n.visible || !n.hasOwnProperty("visible")) {
                         // If name length > 10, truncate to the form "abcde...vwxyz"
                         name = n.name;
@@ -1531,7 +1585,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
                         spg.setEdge(getUniqueNodeName(lnk.to), getUniqueNodeName(lnk.from), { arrowhead: "reversed", lineInterpolate: "basis", weight: 1 });
                     } else if (getDetails(getNode(lnk.to)) && getDetails(getNode(lnk.to)).hasOwnProperty("Loops To") && getDetails(getNode(lnk.to))["Loops To"] == getNode(lnk.from).id) {
                         spg.setEdge(getUniqueNodeName(lnk.to), getUniqueNodeName(lnk.from), { arrowhead: "reversed", lineInterpolate: "basis", weight: 1 });
-                    } else if (getNode(lnk.to).type == "inst" && getNode(lnk.from).type == "channel") {
+                    } else if (getNode(lnk.to).type == "inst" && (getNode(lnk.from).type == "channel" || getNode(lnk.from).type == "pipe")) {
                         // Workaround OpenCL designs that can deadlock. Deadlock is caused by IO Read that precedes IO write in multiple kernels
                         // Example:
                         //  2 kernels, both need to do an IO read from the other one. Now we end up with a deadlock
@@ -1653,10 +1707,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
     function addCheckBox() {
         var CHECK_BOX_PREFIX = "<input id='linkCheck' type='checkbox' checked='checked' name='linkType' value='";
         var menu = "";
-        var graph = GRAPH_CONST[graphType].name;
-
         menu += "<form id='layerMenu'>";
-
         menu += "<button title=\"Zoom to fit\" type='button' onclick='" + graph + ".zoomToFit(500)' style=\"padding:0\">Reset Zoom</button><button title=\"Remove highlights\" type='button' onclick='" + graph + ".removeHighlights()' style=\"padding:0\">Clear Selection</button>&nbsp&nbsp&nbsp&nbsp";
 
         // TODO: change if (graphType) condition to flags: ememFlag: memsys; lmemFlag: memsys; intfcFlag: channel and stream
@@ -1672,7 +1723,13 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
                         break;
                     case "memsys": menu += CHECK_BOX_PREFIX + nt + "' onClick='" + graph + ".resetVisibleLinks()'>&nbspMemory&nbsp&nbsp";
                         break;
-                    case "channel": menu += CHECK_BOX_PREFIX + nt + "' onClick='" + graph + ".resetVisibleLinks()'>&nbspChannels&nbsp&nbsp";
+                    case "channel": 
+                    case "pipe":
+                        if (product === PRODUCTS.SYCL) {
+                          menu += CHECK_BOX_PREFIX + nt + "' onClick='" + graph + ".resetVisibleLinks()'>&nbspPipes&nbsp&nbsp";
+                        } else {
+                          menu += CHECK_BOX_PREFIX + nt + "' onClick='" + graph + ".resetVisibleLinks()'>&nbspChannels&nbsp&nbsp";
+                        }
                         break;
                     case "stream": menu += CHECK_BOX_PREFIX + nt + "' onClick='" + graph + ".resetVisibleLinks()'>&nbspStreams&nbsp&nbsp";
                         break;
@@ -1729,8 +1786,10 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
 
                     // Remove channels and links to channels
                     case "channel":
+                    case "pipe":
                         spgSVG.selectAll("g.edgePath path").filter(function (k) {
-                                if (flattenedNodes[k.v].type == "channel" || flattenedNodes[k.w].type == "channel") {
+                                if (flattenedNodes[k.v].type == "channel" || flattenedNodes[k.w].type == "channel" ||
+                                    flattenedNodes[k.v].type == "pipe" || flattenedNodes[k.w].type == "pipe") {
                                     invisLinks.push(k);
                                     return true;
                                 }
@@ -1739,7 +1798,7 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
                             .style("visibility", "hidden");
 
                         spgSVG.selectAll("g.node rect, g.nodes .label").filter(function (n) {
-                                if (flattenedNodes[n].type == "channel") {
+                                if (flattenedNodes[n].type == "channel" || flattenedNodes[n].type == "pipe") {
                                     if (invisNodes.indexOf(n) == -1) invisNodes.push(n);
                                     return true;
                                 }
@@ -1785,8 +1844,6 @@ function StartGraph(mavData, graphType, kernelName, lmemName, bankList, bankName
 
     // Zoom to fit function
     this.zoomToFit = function (duration) {
-        var GID = "#" + GRAPH_CONST[graphType].gid;
-
         var panelWidth = $(GID)[0].getBoundingClientRect().width - 2 * marginOffset;
         var panelHeight = $(GID)[0].getBoundingClientRect().height - 2 * marginOffset;
 
@@ -1898,40 +1955,45 @@ function renderNoGraphForType(graph,title,type,details,message){
  * Use for Local Memory Viewer only, later expand to External Memory Viewer
  */
 function renderGraphForBank(graphJSON, kernel_name, lmem_name, bank_name, replFlag, bankList) {
+  let graphValue = getViewerConst();
+  if (graphValue === undefined) {
+    console.warn("Error! Trying to add Graph but view is not " + VIEWS["LMEM"].name);
+    return;  // Error! Cannot invoke graph
+  }
 
-    // Start a new graph
-    $('#LMEMG').html(GRAPH_LOADING_DIV);
-    // Clear details pane before rendering
-    clearDivContent();
-    setTimeout(function() {
-            lmem_graph = new StartGraph(graphJSON, "LMEM", kernel_name, lmem_name, bankList, bank_name, replFlag);
-            lmem_graph.refreshGraph();
-        }, 20);
+  // Start a new graph
+  $('#LMEMG').html(GRAPH_LOADING_DIV);
+  // Clear details pane before rendering
+  clearDivContent();
+  setTimeout(function() {
+          lmem_graph = new StartGraph(graphJSON, graphValue, kernel_name, lmem_name, bankList, bank_name, replFlag);
+          lmem_graph.refreshGraph();
+      }, 20);
 }
 
-/* Render graph
+/* Render graph. This is the entry point for all hierarchies of graph viewer
  * choose the rendering flag based on graphType
  */
-function renderGraph(graphJSON, graphType, graphID) {
+function renderGraph(graphJSON, graphID) {
     if (graphID !== undefined && top_node_id === graphID) return;  // do nothing if user clicks the same ID
-    top_node_id = graphID;
-
-
-    // Clear details pane before rendering
-    clearDivContent();
+    let graphValue = getViewerConst();
+    if (graphValue === undefined) {
+      console.warn("Error! Trying to add Graph but view is not " + VIEWS["GV"].name);
+      return;  // Error! Cannot invoke graph
+    }
+    top_node_id = graphID;  // update top node
+    clearDivContent();  // Clear details pane before rendering
 
     // Restart the new graph
-    var GID = GRAPH_CONST[graphType].gid;
-    var loading_message = "Loading...";
+    let GID = graphValue.gid;
+    let loading_message = "Loading...";
 
     // Sanity check graphJSON
     if (graphJSON === undefined) {
         top_node_id = -1;
-        if (graphType == "GV") {
-            renderNoGraphForType("#" + GID, "", "choose_graph", "");
-            $(".panel-heading [id^=layers]").html('');
-            return;
-        }
+        renderNoGraphForType("#" + GID, "", "choose_graph", "");
+        $(".card-header [id^=layers]").html('');
+        return;
     } else if (graphJSON.nodes === undefined || graphJSON.nodes.length === 0) {
         top_node_id = -1;
         if (graphJSON.message) {
@@ -1939,7 +2001,7 @@ function renderGraph(graphJSON, graphType, graphID) {
         } else {
             renderNoGraphForType("#" + GID, "", "no_nodes", "");
         }
-        $(".panel-heading #layers*").html('');
+        $(".card-header #layers*").html('');
         return;
     }
     var nodes = graphJSON.nodes.length;
@@ -1949,13 +2011,81 @@ function renderGraph(graphJSON, graphType, graphID) {
 
     $('#' + GID).html(GRAPH_MESSAGE_PREFIX + loading_message + GRAPH_MESSAGE_SUFFIX);
     setTimeout(function() {
-        switch (graphType) {
-            case "GV":
-                gv_graph = new StartGraph(graphJSON, graphType);
-                gv_graph.zoomToFit(0);
-                break;
-        }
+        gv_graph = new StartGraph(graphJSON, graphValue);
+        gv_graph.zoomToFit(0);
         refreshAreaVisibility();
         adjustToWindowEvent();
     }, 20);
+}
+
+/**
+ * @function addViewerPanel create report pane for viewer data to populate later.
+ * 
+ * @param {Object} view an element in VIEWS object.
+ * @param {String} layerId id to be created for the graph.
+ * @param {String} panelId id of the report body defined in VIEWER_CONST.
+ * @returns {HTML div element} to be append to the report body div.
+ */
+function addViewerPanel(view, layerId, panelId) {
+  let headerName = view.name;
+  let paneHeading = document.createElement('div');
+  paneHeading.className = "card-header";
+  paneHeading.innerHTML = headerName;
+
+  let entitySpan = document.createElement('span');
+  entitySpan.className = "currentEntity";
+  paneHeading.appendChild(entitySpan);
+
+  let buttonSpan = document.createElement('span');
+  buttonSpan.setAttribute("style", "float:right");
+  let buttonDiv = document.createElement('div');
+  buttonDiv.id = layerId;
+  buttonSpan.appendChild(buttonDiv);
+  paneHeading.appendChild(buttonSpan);
+
+  let reportBody = document.createElement('div');
+  reportBody.id = "report-panel-body";
+  reportBody.className = "card";
+  reportBody.appendChild(paneHeading);
+
+  let viewBody = document.createElement('div');
+  viewBody.id = panelId;
+  viewBody.className = "card-body"; //  fade in active";
+  reportBody.appendChild(viewBody);
+
+  let idName = view.id;
+  let reportBodyContainer = document.createElement('div');
+  reportBodyContainer.id = idName;
+  reportBodyContainer.className = "classWithPad";
+  reportBodyContainer.appendChild(reportBody);
+
+  let reportCol = document.createElement('div');
+  reportCol.id = "report-pane-col2";
+  reportCol.className = "col col-sm-9";
+  reportCol.appendChild(reportBodyContainer);
+
+  return reportCol;
+}
+
+/**
+ * @function setViewerPanelHeight changes the report body panel height during resizing.
+ * 
+ * @param {*} reportBodyDiv 
+ * @param {*} reportPaneHeight 
+ */
+function setViewerPanelHeight(reportBodyDiv, reportPaneHeight) {
+  let viewerValues = getViewerConst();
+  if (viewerValues !== undefined) {
+    // Only make adjustment if view is from system viewer and memory viewer
+    let HeaderList = reportBodyDiv.find( ".card-header" );
+    if (HeaderList.length === 0) { console.warn("Warning! Viewer report body has no header."); }
+    let viewerHeaderHeight = HeaderList.eq(0).height();
+    let newHeightValue = reportPaneHeight - viewerHeaderHeight - 48;
+
+    let GID = viewerValues.gid;
+    let elemId = viewerValues.elemId;
+    $('#' + GID).css('height', newHeightValue);
+    $('#' + elemId).css('height', newHeightValue);
+    $('#' + elemId).css('width', $('#report-pane').innerWidth());  
+  }
 }

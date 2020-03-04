@@ -4,9 +4,9 @@
   , "debug_enabled":"true"
   , "type":"module"
   , "total_percent":
-  [0.667605, 0.611306, 0.138986, 0, 0.263505]
+  [0.42079, 0.387289, 0.0860838, 0, 0.131752]
   , "total":
-  [5203, 2375, 0, 4, 1]
+  [3289, 1471, 0, 2, 1]
   , "name":"System"
   , "max_resources":
   [854400, 1708800, 2713, 1518, 42720]
@@ -17,9 +17,9 @@
       , "compute_units":1
       , "type":"function"
       , "total_percent":
-      [0.667605, 0.611306, 0.138986, 0, 0.263505]
+      [0.42079, 0.387289, 0.0860838, 0, 0.131752]
       , "total_kernel_resources":
-      [5203, 2375, 0, 4, 1]
+      [3289, 1471, 0, 2, 1]
       , "details":
       [
         {
@@ -76,7 +76,7 @@
               "name":"State"
               , "type":"resource"
               , "data":
-              [60, 1577, 0, 0, 0]
+              [83, 1109, 0, 0, 0]
               , "details":
               [
                 {
@@ -109,7 +109,7 @@
                   "name":"No Source Line"
                   , "type":"resource"
                   , "data":
-                  [60, 1577, 0, 0, 0]
+                  [83, 1109, 0, 0, 0]
                 }
               ]
             }
@@ -159,7 +159,7 @@
               "name":"Cluster logic"
               , "type":"resource"
               , "data":
-              [7, 5, 0, 0, 1]
+              [8, 5, 0, 0, 1]
               , "details":
               [
                 {
@@ -204,7 +204,7 @@
                   , "replace_name":"true"
                 }
                 , {
-                  "name":"myproject.cpp:414 > ac_fixed.h:603 > \nac_int.h:646"
+                  "name":"myproject.cpp:84 > ac_fixed.h:603 > \nac_int.h:663"
                   , "type":"resource"
                   , "data":
                   [384, 0, 0, 0, 0]
@@ -213,15 +213,7 @@
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":414
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":603
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
-                        , "line":646
+                        , "line":84
                       }
                     ]
                   ]
@@ -238,24 +230,16 @@
                   , "replace_name":"true"
                 }
                 , {
-                  "name":"myproject.cpp:414 > ac_fixed.h:603 > \nac_int.h:647"
+                  "name":"myproject.cpp:84 > ac_fixed.h:603 > \nac_int.h:664"
                   , "type":"resource"
                   , "data":
-                  [3523, 686, 0, 2.5, 0]
+                  [1625, 0, 0, 2, 0]
                   , "debug":
                   [
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":414
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":603
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
-                        , "line":647
+                        , "line":84
                       }
                     ]
                   ]
@@ -269,127 +253,158 @@
                       [384, 0, 0, 0, 0]
                     }
                     , {
-                      "name":"32-bit Integer Multiply"
+                      "name":"signed 16-bit x signed 10-bit to 26-bit Integer Multiply"
                       , "type":"resource"
-                      , "count":36
+                      , "count":6
                       , "data":
-                      [3139, 686, 0, 2.5, 0]
+                      [183, 0, 0, 1, 0]
                     }
-                  ]
-                  , "replace_name":"true"
-                }
-                , {
-                  "name":"myproject.cpp:415 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:652"
-                  , "type":"resource"
-                  , "data":
-                  [800, 0, 0, 0, 0]
-                  , "debug":
-                  [
-                    [
-                      {
-                        "filename":"firmware/myproject.cpp"
-                        , "line":415
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":656
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":612
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
-                        , "line":652
-                      }
-                    ]
-                  ]
-                  , "children":
-                  [
-                    {
-                      "name":"16-bit Integer Add"
-                      , "type":"resource"
-                      , "count":50
-                      , "data":
-                      [800, 0, 0, 0, 0]
-                    }
-                  ]
-                  , "replace_name":"true"
-                }
-                , {
-                  "name":"myproject.cpp:427 > ac_fixed.h:603 > \nac_int.h:647"
-                  , "type":"resource"
-                  , "data":
-                  [336, 98, 0, 1.5, 0]
-                  , "debug":
-                  [
-                    [
-                      {
-                        "filename":"firmware/myproject.cpp"
-                        , "line":427
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":603
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
-                        , "line":647
-                      }
-                    ]
-                  ]
-                  , "children":
-                  [
-                    {
-                      "name":"32-bit Integer Multiply"
+                    , {
+                      "name":"signed 16-bit x signed 11-bit to 27-bit Integer Multiply"
                       , "type":"resource"
                       , "count":5
                       , "data":
-                      [336, 98, 0, 1.5, 0]
+                      [128, 0, 0, 1, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 4-bit to 20-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":2
+                      , "data":
+                      [70, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 6-bit to 22-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":4
+                      , "data":
+                      [126, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 7-bit to 23-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":7
+                      , "data":
+                      [288, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 8-bit to 24-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":7
+                      , "data":
+                      [251, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 9-bit to 25-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":4
+                      , "data":
+                      [195, 0, 0, 0, 0]
                     }
                   ]
                   , "replace_name":"true"
                 }
                 , {
-                  "name":"myproject.cpp:428 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:652"
+                  "name":"myproject.cpp:85 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:669"
                   , "type":"resource"
                   , "data":
-                  [80, 0, 0, 0, 0]
+                  [870, 330, 0, 0, 0]
                   , "debug":
                   [
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":428
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":656
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_fixed.h"
-                        , "line":612
-                      }
-                      , {
-                        "filename":"/data/ntran/intelFPGA_pro/19.2/hls/include/HLS/ac_int.h"
-                        , "line":652
+                        , "line":85
                       }
                     ]
                   ]
                   , "children":
                   [
                     {
-                      "name":"16-bit Integer Add"
+                      "name":"llvm.experimental.vector.reduce.add"
                       , "type":"resource"
                       , "count":5
                       , "data":
-                      [80, 0, 0, 0, 0]
+                      [870, 330, 0, 0, 0]
                     }
                   ]
                   , "replace_name":"true"
                 }
                 , {
-                  "name":"myproject.cpp:434"
+                  "name":"myproject.cpp:98 > ac_fixed.h:603 > \nac_int.h:664"
+                  , "type":"resource"
+                  , "data":
+                  [221, 0, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"firmware/myproject.cpp"
+                        , "line":98
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"signed 16-bit x signed 10-bit to 26-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [47, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 11-bit to 27-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":2
+                      , "data":
+                      [64, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 12-bit to 28-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [66, 0, 0, 0, 0]
+                    }
+                    , {
+                      "name":"signed 16-bit x signed 9-bit to 25-bit Integer Multiply"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [44, 0, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"myproject.cpp:99 > ac_fixed.h:656 > \nac_fixed.h:612 > ac_int.h:669"
+                  , "type":"resource"
+                  , "data":
+                  [85, 18, 0, 0, 0]
+                  , "debug":
+                  [
+                    [
+                      {
+                        "filename":"firmware/myproject.cpp"
+                        , "line":99
+                      }
+                    ]
+                  ]
+                  , "children":
+                  [
+                    {
+                      "name":"llvm.experimental.vector.reduce.add"
+                      , "type":"resource"
+                      , "count":1
+                      , "data":
+                      [85, 18, 0, 0, 0]
+                    }
+                  ]
+                  , "replace_name":"true"
+                }
+                , {
+                  "name":"myproject.cpp:105"
                   , "type":"resource"
                   , "data":
                   [3, 2, 0, 0, 0]
@@ -398,7 +413,7 @@
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":434
+                        , "line":105
                       }
                     ]
                   ]

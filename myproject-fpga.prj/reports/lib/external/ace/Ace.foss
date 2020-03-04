@@ -1,6 +1,6 @@
 [foss]
 name = Ace
-version = 1.2.3
+version = 1.4.4
 description = Ajax.org Cloud9 Editor
 case = 226274
 source = true

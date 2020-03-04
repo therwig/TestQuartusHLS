@@ -90,7 +90,7 @@
                   [
                     {
                       "filename":"firmware/myproject.cpp"
-                      , "line":"434"
+                      , "line":"105"
                     }
                   ]
                 }
@@ -136,7 +136,7 @@
                 [
                   {
                     "filename":"firmware/myproject.cpp"
-                    , "line":410
+                    , "line":79
                   }
                 ]
               ]
@@ -162,7 +162,7 @@
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":413
+                        , "line":82
                       }
                     ]
                   ]
@@ -192,7 +192,7 @@
                 [
                   {
                     "filename":"firmware/myproject.cpp"
-                    , "line":423
+                    , "line":93
                   }
                 ]
               ]
@@ -218,7 +218,7 @@
                     [
                       {
                         "filename":"firmware/myproject.cpp"
-                        , "line":426
+                        , "line":96
                       }
                     ]
                   ]

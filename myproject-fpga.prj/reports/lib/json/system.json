@@ -3,38 +3,13 @@
   [
     {
       "name":"myproject"
-      , "id":3489319400
+      , "id":3231217592
       , "type":"component"
       , "children":
       [
         {
-          "name":"Stream Write"
-          , "id":3489889672
-          , "details":
-          [
-            {
-              "type":"table"
-              , "Basic Block":"myproject.B1.start"
-              , "Width":"16 bits"
-              , "Depth":"0"
-              , "Stall-free":"No"
-              , "Latency":"0"
-            }
-          ]
-          , "debug":
-          [
-            [
-              {
-                "filename":"firmware/myproject.cpp"
-                , "line":434
-              }
-            ]
-          ]
-          , "type":"inst"
-        }
-        , {
           "name":"Stream Read"
-          , "id":3489901400
+          , "id":3232285528
           , "details":
           [
             {
@@ -57,11 +32,36 @@
           ]
           , "type":"inst"
         }
+        , {
+          "name":"Stream Write"
+          , "id":3232293704
+          , "details":
+          [
+            {
+              "type":"table"
+              , "Basic Block":"myproject.B1.start"
+              , "Width":"16 bits"
+              , "Depth":"0"
+              , "Stall-free":"No"
+              , "Latency":"0"
+            }
+          ]
+          , "debug":
+          [
+            [
+              {
+                "filename":"firmware/myproject.cpp"
+                , "line":105
+              }
+            ]
+          ]
+          , "type":"inst"
+        }
       ]
     }
     , {
       "name":"return.myproject"
-      , "id":3489319192
+      , "id":3231217384
       , "details":
       [
         {
@@ -79,8 +79,8 @@
       , "type":"stream"
     }
     , {
-      "name":"do.myproject"
-      , "id":3489321224
+      "name":"call.myproject"
+      , "id":3231233608
       , "details":
       [
         {
@@ -101,16 +101,16 @@
   , "links":
   [
     {
-      "from":3489889672
-      , "to":3489319192
+      "from":3232293704
+      , "to":3231217384
     }
     , {
-      "from":3489321224
-      , "to":3489901400
+      "from":3231233608
+      , "to":3232285528
     }
     , {
-      "from":3489901400
-      , "to":3489889672
+      "from":3232285528
+      , "to":3232293704
     }
   ]
 }

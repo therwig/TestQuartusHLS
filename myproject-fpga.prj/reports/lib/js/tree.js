@@ -5,7 +5,76 @@
 // aren't strict, but we shouldn't have any of those anyway.
 /* jshint -W097 */
 
-// Renders hierarchy tree for different graphs
+var isValidHierarchyTree = true;
+
+// Determines if treeJSON is valid
+function isValidHierarchyTreeData() {
+  isValidHierarchyTree = (typeof treeJSON != "undefined") && (treeJSON = tryParseJSON(treeJSON)) !== null && !$.isEmptyObject(treeJSON);
+}
+
+/**
+ * @function addTreePanel adds div for populating the tree.
+ * @param {String} headerName appear as the card title.
+ * @param {String} id from VIEWS object for event handle.
+ * @param {Boolean} enableFilter true means add a filter button.
+ * @param {HTML DIV element} element is the parent element that tree will be added as a child.
+ */
+function addTreePanel(headerName, id, enableFilter, element) {
+  // let headerName = view.name.replace("Viewer", "List");
+  let idName = getTreeIDName(id);
+
+  let treeHeading = document.createElement('div');
+  treeHeading.className = "card-header";
+  treeHeading.innerHTML = headerName;
+
+  if (enableFilter) {
+    let filterButton = document.createElement('button');
+    filterButton.className = "btn btn-default btn-sm dropdown-toggle";
+    filterButton.setAttribute("data-toggle", "dropdown");
+    // Make the filter button text
+    let filterButtonText = document.createElement('span');
+    filterButtonText.className = "body glyphicon";
+    filterButtonText.innerHTML = "&#xe138;";
+    filterButton.appendChild(filterButtonText);
+    filterButtonText = document.createElement('span');
+    filterButtonText.className = "caret";
+    filterButton.appendChild(filterButtonText);
+
+    // Button and dropdown list
+    let filterButtonGroup = document.createElement('div');
+    filterButtonGroup.id = idName + "-button";
+    filterButtonGroup.className = "btn-group float-right";
+    filterButtonGroup.appendChild(filterButton);
+
+    // Drop down, data will be fill dynamically for each view
+    let filterDropDown = document.createElement('div');
+    filterDropDown.id = idName + "-filter";
+    filterDropDown.className = "dropdown-menu dropdown-menu-right";
+    filterButtonGroup.appendChild(filterDropDown);
+
+    treeHeading.appendChild(filterButtonGroup);
+  }
+
+  let treePanelDiv = document.createElement('div');
+  treePanelDiv.id = "report-panel-tree";
+  treePanelDiv.className = "card";
+  treePanelDiv.appendChild(treeHeading);
+
+  let treeBody = document.createElement('div');
+  treeBody.id = idName;
+  treeBody.className = "card-body";
+  treeBody.style.padding = "10px";  // overwrite the default to smaller padding
+  treePanelDiv.appendChild(treeBody);
+
+  let treeListDiv = document.createElement('div');
+  treeListDiv.id = "tree-list";
+  treeListDiv.className = "col col-sm-3";
+  treeListDiv.appendChild(treePanelDiv);
+
+  element.appendChild(treeListDiv);
+}
+
+// Renders hierarchy tree for different viewer to element: fancytree-container
 // Error check of valid JSON should be done before we try rendering
 function addHierarchyTree(view) {
   var ICON_LOC = "lib/external/fancytree/skin-win8/";
@@ -75,30 +144,31 @@ function addHierarchyTree(view) {
   hierList.push(systemEntry);
   // If there are kernel/components to render, then add it to the fancytree:
   if (treeNodes.nodes.length !== 0) {
-    // Iterate through each element in the module: kernel|component
-    // TODO: It'd be preferable to sort the functions, blocks, and clusters in
-    // the backend instead of here.
+    // Iterate through each function in the module: kernel|component
+    // Sort the functions, blocks, and clusters by name for ease to find. This is like VS or Eclipse outline panel
     treeNodes.nodes.sort(function(a,b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0; });
-    treeNodes.nodes.forEach(function (element) {
-      // Check whether it's either a kernel (OpenCL) or component (HLS)
-      if (element.type == "kernel" || element.type == "component") {
-        var functionName = element.name;
-        var functionEntry = { title: functionName, type: element.type, hideCheckbox: true, expanded: true, icon: ICON_LOC + KERNEL_ICON, children: [] };
+    treeNodes.nodes.forEach(function (globalNode) {
+      // Global nodes can either OpenCL: Kernels, Channels, or HLS: Component, Streams, and system memory (aka external memory)
+      if (globalNode.type == "kernel" || globalNode.type == "component") {
+        var functionName = globalNode.name;
+        var functionEntry = { title: functionName, type: globalNode.type, nodeId: globalNode.id, hideCheckbox: true, expanded: true, icon: ICON_LOC + KERNEL_ICON, children: [] };
         // Iterate through each node: local memory, basic block, interface
-        element.children.sort(function(a,b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0; });
-        element.children.forEach(function (node) {
-          if (viewValue == VIEWS.GV.value) {
+        globalNode.children.sort(function(a,b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0; });
+        // Children node can be local memory and loops
+        globalNode.children.forEach(function (node) {
+          if (viewValue === VIEWS.GV.value || viewValue === VIEWS.SCHEDULE.value) {
+            // Add the same system tree for graph or schedule viewer
             if (node.type == "bb") {
               // Add all blocks to function, block and cluster viewer
-              var bbName = node.name;
-              var bbEntry = { title: bbName, type: node.type, nodeId: node.id, hideCheckbox: true, expanded: true, icon: ICON_LOC + KERNEL_ICON, children: [] };
+              let bbName = node.name;
+              var bbEntry = { title: bbName, type: node.type, nodeId: node.id, hideCheckbox: true, expanded: true, icon: ICON_LOC + KERNEL_ICON, children: [], functionId: globalNode.id };
               functionEntry.children.push(bbEntry);
               // Iterate through each: cluster
               if (node.children !== undefined) {
                 node.children.sort(function(a,b) { if (a.name < b.name) return -1; if (a.name > b.name) return 1; return 0; });
                 node.children.forEach(function (cluster) {
                   var cname = cluster.name;
-                  var clusterEntry = { title : cname, type: cluster.type, nodeId: cluster.id, hideCheckbox: true, expanded: true, icon: ICON_LOC + MEMORY_ICON };
+                  var clusterEntry = { title : cname, type: cluster.type, nodeId: cluster.id, hideCheckbox: true, expanded: true, icon: ICON_LOC + MEMORY_ICON, functionId: globalNode.id };
                   bbEntry.children.push(clusterEntry);
                 });
               }
@@ -159,6 +229,7 @@ function addHierarchyTree(view) {
       }
     });
 
+    // TODO: Refactor this portion to addFancyTree to allow better unittest
     // Add fancy tree to the right element ID
     var elemId = "#" + getTreeIDName(view.id);
     $(elemId).fancytree({
@@ -193,25 +264,25 @@ function addHierarchyTree(view) {
           var nodeId = data.node.data.nodeId;
           if (pipelineJSON[nodeId] !== undefined) {
             $("#GVG").parent().find(".currentEntity").text(": " + data.node.parent.title + " > " + data.node.title);
-            renderGraph(pipelineJSON[nodeId], "GV", nodeId);
+            renderGraph(pipelineJSON[nodeId], nodeId);
           } else if (blockJSON[nodeId] !== undefined) {
             $("#GVG").parent().find(".currentEntity").text(": " + data.node.title);
-            renderGraph(blockJSON[nodeId], "GV", nodeId);
+            renderGraph(blockJSON[nodeId], nodeId);
           } else if (data.node.data.type === "system") {
             if (systemJSON !== undefined && !$.isEmptyObject(systemJSON)) {
               // HLS uses new backend infrastructure to serilize system graph --> systemJSON
               $("#GVG").parent().find(".currentEntity").text("");
-              renderGraph(systemJSON, "GV", 0);
+              renderGraph(systemJSON, 0);
             } else if (mavJSON !== undefined && !$.isEmptyObject(mavJSON)) {
               // OpenCL uses old backend infrastructure to serialize system graph --> mavJSON
               $("#GVG").parent().find(".currentEntity").text("");
-              renderGraph(mavJSON, "GV", 0);
+              renderGraph(mavJSON, 0);
             }
           } else {
-            if (flow == FLOWS.HLS) {
+            if (product == PRODUCTS.HLS) {
               // HLS: Component viewer uses old infrastructure --> mavJSON
               // TODO: when the new infrastructure is used for the HLS function
-              // viewer, we should be simply call renderGraph(funcJSON, "GV").
+              // viewer, we should be simply call renderGraph(funcJSON, nodeId).
               $("#GVG").parent().find(".currentEntity").text(": " + data.node.title);
               var comp_name = data.node.title;
               // backward compitable begin
@@ -219,13 +290,13 @@ function addHierarchyTree(view) {
               if (isValidSystemViewer) {
                 $('#GVG').html(GRAPH_LOADING_DIV);
                 setTimeout(function() {
-                  cspv_graph = new StartGraph(mavJSON, "CSPV", comp_name);
+                  cspv_graph = new StartGraph(mavJSON, VIEWER_CONST["CSPV"], comp_name);
                   cspv_graph.refreshGraph();
                 }, 20);
               } // end backward compitable
             } else {
               // OpenCL: no function viewer yet
-              renderGraph(undefined, "GV", -2);
+              renderGraph(undefined, -2);
             }
           }
         }
@@ -262,6 +333,24 @@ function addHierarchyTree(view) {
             renderGraphForBank(new_lmvJSON, kernel_name, lmem_name, bank_name, true, bankList);
           } else if (data.node.data.type === "reg" || data.node.data.type === "unsynth" || data.node.data.type === "untrack") {
             renderNoGraphForType("#LMEMG", data.node.title, data.node.data.type, data.node.data.details);
+          }
+        }
+        else if (curElemID === getTreeIDName(VIEWS.SCHEDULE.id)) {
+          let nodeId = data.node.data.nodeId;
+          if (scheduleJSON[nodeId] !== undefined) {
+            // clicked a function
+            renderSchedule(scheduleJSON[nodeId], 
+              nodeId, 
+              treeJSON.nodes.find(function(a) { if (a.id === nodeId) {return a;} })
+            );
+          } else {
+            let funcId = data.node.data.functionId;
+            if (scheduleJSON[funcId] !== undefined) {
+              renderSchedule(scheduleJSON[funcId],
+                nodeId,
+                treeJSON.nodes.find(function(a) { if (a.id === funcId) {return a;} })
+              );
+            }
           }
         }
       } ,
@@ -384,6 +473,40 @@ function addHierarchyTree(view) {
   }
 }
 
+// Add basic fancy tree. Wrapper to invoke fancy tree library
+function addFancyTree(id, hierList) {
+  var elemId = "#" + getTreeIDName(id);
+  $(elemId).fancytree({
+    extensions: ["filter"],
+    checkbox: true,
+    selectMode: 3, // 1:single selection, 2:multiple selection, 3:hierarchical selection
+    source: hierList,
+    icon: false, // Disable the default icons
+    clickFolderMode: 3, // 1:activate, 2:expand, 3:activate and expand, 4:activate (dblclick expands)
+    filter: {
+      fuzzy: false,
+      nodata: false,  // Don't display a 'no data' status node if result is empty
+      mode: "hide"  // Remove unmatched nodes (use "dimm" to grey them out instead)
+    },
+  });
+}
+
 function getTreeIDName(id) {
   return id + "-tree";
+}
+
+/**
+ * @function setTreePanelHeight changes the tree panel height during resizing.
+ * 
+ * @param {HTML DIV element} treeDiv is the element that contains the tree
+ * @param {integer} reportPaneHeight is height of the whole report-pane
+ */
+function setTreePanelHeight(treeDiv, reportPaneHeight) {
+  let HeaderList = treeDiv.find( ".card-header" );
+  if (HeaderList.length === 0) { console.warn("Warning! Tree has no header."); }
+  let treeHeaderHeight = HeaderList.eq(0).height();
+  // Subtract the header height plus paddings so we can see the scroll bar the bottom
+  // minus a bit more totals to 48, so it looks like it's inside padding to be consistent
+  let newHeightValue = reportPaneHeight - treeHeaderHeight - 48;
+   $('ul.fancytree-container').css('height', newHeightValue);
 }

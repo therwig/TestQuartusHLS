@@ -6,7 +6,7 @@
 /* jshint -W097 */
 
 // columns names showed in table
-var report_cols = ["", "Target II", "Scheduled Fmax", "Block II", "Latency", "Max Interleaving Iterations"];
+var report_cols = ["", "Target II", "Scheduled fMAX", "Block II", "Latency", "Max Interleaving Iterations"];
 var g_padding = "        ";
 
 // utility function for repeat string Num times
@@ -25,6 +25,9 @@ function filterString(str,range) {
   if (n != -1) {
     if (range === "after") return str.substring(n + 2);
     if (range === "before") return str.substring(0, n );
+  } else {
+    if (range === "after") return "";
+    if (range === "before") return str;
   }
   return str;
 }
@@ -47,22 +50,21 @@ function generateDetailsInList(details, list) {
           code_links.push(createA);
         });
       }
-
-      // Replace %L instances with debug links
       var text = item.text;
-      code_links.forEach(function(link){
+      if ( (text.match(/%L/g) || []).length !== code_links.length ) {
+        console.log("WARNING: Mismatch between number of %L's and links in details");
+      }
+      // Replace %L instances with debug links
+      var i;
+      for ( i = 0; (text.match(/%L/g) || []).length; i++) {
         var toInsert = filterString(text,"before");
         text = filterString(text,"after");
         li.appendChild(document.createTextNode(toInsert));
-        li.appendChild(link);
-      });
+        li.appendChild(code_links[i]);
+      }
 
       li.appendChild(document.createTextNode(text));
-      text = filterString(text,"after");
 
-      if(text !== ""){
-        console.log("Error: Mismatch between number of %L's and links in details");
-      }
       var inner_ul = document.createElement("UL");
       if ("details" in item) {
         generateDetailsInList(item.details, inner_ul);
@@ -159,7 +161,9 @@ function renderLoopInfo(func_data, basicblock_info, loop_header_block, top_div) 
 
     // Latency
     var td_latency = document.createElement("TD");
-    var latency_str = block_info.latency;
+    // Workaround Find the latency based on name based on block_info.name in schedule.json
+    var blockLatency = findLatency(block_info.name);
+    var latency_str = (blockLatency < 0) ? "Unknown" : blockLatency.toString();  // Error handling
     td_latency.appendChild(document.createTextNode(latency_str));
     tr.appendChild(td_latency);
 
@@ -303,4 +307,25 @@ function createTable(data) {
 function renderFmaxIITable(data) {
   var table = createTable(data);
   return table.innerHTML;
+}
+
+// find the latency from scheduleJSON
+// returns -1 if fails to find the block
+function findLatency(blockName) {
+  var latency = -1;
+  var found = false;
+  Object.keys(scheduleJSON).forEach( function(funcID) {
+    var func = scheduleJSON[funcID];
+    if (func.hasOwnProperty("nodes")) {
+      func["nodes"].forEach( function(block) {
+        if (block.name === blockName) {
+          found = true;
+          latency = block.end - block.start;
+          return;
+        }
+      });
+    }
+    if (found) return;
+  });
+  return latency;
 }

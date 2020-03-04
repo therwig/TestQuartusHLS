@@ -75,25 +75,32 @@
   font-weight:400;
   font-style:bold;
 }
-body {
+/* Glyhicon */
+@font-face{
+  font-family: "Glyhicon";
+  src:
+    local('Glyhicon'),
+    local('Glyhicon'),
+    url('../../lib/media/fonts/glyphicons-halflings-regular.ttf')
+    format('truetype');
+  font-weight:normal;
+  font-style:normal;
+}
+.body {
   font-family:"Intel Clear";
 }
-button
+.body.glyphicon
 {
-  font-size:14px;
+  font-family:"Glyhicon";
+  font-size:12px;
+}
+.button {
+  font-size:12px;
   margin-left:2px;
   margin-right:2px;
   padding:0px;
 }
 
-.panel-heading-text
-{
-  font-size:16px;
-}
-.glyphicon-chevron-up, .glyphicon-chevron-down
-{
-  font-size:12px;
-}
 .navbar
 {
   font-family:"Intel Clear";
@@ -143,49 +150,6 @@ footer
     border: 1px solid transparent;
 }
 
-/* Ace Editor */
-
-.input-group-btn
-{
-    width:100%;
-    display:block;
-}
-
-#editor-nav-button
-{
-    width:100%;
-    text-align:left;
-    margin-left: 0px;
-    margin-right: 5px;
-}
-
-#close-source
-{
-    width:40px;
-    color: black;
-    border: 1px solid rgb(150, 150, 150);
-    margin-left:5px;
-}
-
-#editor-nav-button, #close-source
-{
-    height: 40px;
-    margin-right:0px !important;
-    border-radius:4px !important;
-    margin-bottom:5px;
-}
-
-.select .caret
-{
-    position:absolute;
-    right:10px;
-    margin-top:10px;
-}
-
-.selected {
-    padding-right:10px;
-}
-
 .option {
     width:100%;
 }
@@ -208,7 +172,8 @@ footer
 
 .classWithPad
 {
-  margin:10px;
+  height:100%;
+  margin:0px;
   padding:0px;
 }
 
@@ -242,56 +207,6 @@ footer
 /* These divs have their height set based on their
  * content.
  */
-#table-header thead {
-  overflow-x: hidden;
-}
-
-#table-header {
-  background-color: white;
-  z-index:2;
-}
-
-#table-header th {
-  background-color: white;
-  padding-left: 8px;
-  padding-right: 0px;
-  border-top: 1px solid #dddddd;
-}
-
-.table th,td
-{
-  font-size: 11px;
-  overflow: hidden;
-  white-space: pre;
-  text-overflow: ellipsis;
-  vertical-align: middle !important;
-}
-
-.glyphicon-chevron-down:before,  .glyphicon-chevron-down:after,
-.glyphicon-chevron-right:before, .glyphicon-chevron-right:after
-{
-  z-index: 1;
-}
-
-.exp-col-btn
-{
-  width: 116px;
-}
-
-tbody .res-title
-{
-  max-width: 300px;
-}
-
-tbody .res-val
-{
-  max-width: 100px;
-}
-
-.ar-toggle, .ar-toggle:active, .ar-toggle:focus, .ar-toggle:hover {
-  text-decoration: none;
-}
-
 #DetailsTable
 {
   table-layout: fixed;
@@ -304,19 +219,17 @@ tbody .res-val
   list-style-type: disc;
 }
 
-.details-list
-{
-  padding-left: 0px;
-  margin:10px;
+.close-icon {
+  cursor: pointer;
 }
 
 /* Report sizing and formatting */
 #report-pane
 {
-  height: 750px;
+  height: 100%;
   min-height: 300px;
   padding: 10px;
-  width: 60%;
+  font-family: "Intel Clear";
 }
 
 #report-panel-tree
@@ -332,20 +245,13 @@ tbody .res-val
 
 #editor-pane
 {
-  height: 750px;
+  height: 100%;
   min-height: 300px;
   padding-top: 10px;
   padding-left: 0px;
   padding-right: 10px;
   padding-bottom: 10px;
   width: 40%;
-}
-
-/* TODO: refactoring to commonize, 
-   not trivial right now as too many places uses it */
-#spv, #system, #lmem, #comp, #pipeline, #bv
-{
-  margin:0px;
 }
 
 #lmem-tree-filter fieldset
@@ -370,9 +276,8 @@ tbody .res-val
 {
   border: #e5e5e5;
   margin-left: 0px !important;
+  padding: 10px;
   padding-top: 0px !important;
-  padding-left: 0px !important;
-  padding-right: 10px !important;
   width: 100%;
 }
 
@@ -395,7 +300,6 @@ tbody .res-val
 }
 #report-panel-body
 {
-  height: 100% !important;
   overflow-y: hidden;
   overflow-x: hidden;
 }
@@ -461,47 +365,6 @@ tbody .res-val
   font-size:12px;
 }
 
-/* Row coloring and formatting */
-.res-heading-row:hover td
-{
-  background-color: white !important;
-}
-
-.module-totalres-row, .partition-totalres-row
-{
-  background-color: #0099ff !important;
-}
-
-.module-totalres-row:hover td, .partition-totalres-row:hover td
-{
-  background-color: #0080E6 !important;
-}
-
-.function-totalres-row
-{
-  background-color: #f66666;
-}
-
-.function-totalres-row:hover td
-{
-  background-color: #e55555 !important;
-}
-
-.basicblock-totalres-row, .resource-totalres-row
-{
-  background-color: #faaaaa;
-}
-
-.basicblock-totalres-row:hover td, .resource-totalres-row:hover td
-{
-  background-color: #e99999 !important;
-}
-
-.module-totalres-row, .function-totalres-row, .res-heading-row, .partition-totalres-row
-{
-  font-weight: bold;
-}
-
 /* Stall point viewer formatting*/
 .clusters rect {
   fill: none;
@@ -509,9 +372,9 @@ tbody .res-val
   stroke-width: 1.5px;
 }
 
+/* Graph Viewers SVG label font size */
 text {
-  font-weight: 300;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .edgePath path {
@@ -520,28 +383,19 @@ text {
   opacity: 0.3;
 }
 
-.ui-tooltip .name {
-  font-family: Consolas, monaco, monospace;
-  font-size: 13px;
+/* Consolidated details and tooltip to use bootstrap card title */
+.card-title {
+  font-size: 16px;
   font-weight: bold;
-  color: #1d99c1;
-  margin: 0;
-  text-align: center;
 }
 
-.ui-tooltip .description {
-  font-family: Consolas, monaco, monospace;
-  font-size: 11px;
-  word-wrap: break-word;
-  text-align: left;
-  color: white;
+.card-title.custom_tooltip {  /* for tooltip in graph */
+  font-size: 14px;
+  font-weight: bold;
 }
 
-.custom_tooltip {
-  padding: 5px 10px;
-  position: fixed;
-  background-color: black !important;
-  z-index: 999999;
+.card {
+  height: 100%;
 }
 
 .ui-helper-hidden-accessible {
@@ -605,25 +459,6 @@ g:hover > polygon[fill="white"]{
   background-color:#f8f8f8 !important;
 }
 
-.fancytree-container,
-span.fancytree-focused span.fancytree-title
-{
-    outline: 0 !important;
-}
-
-ul.fancytree-container {
-  border: 0px;
-}
-
-#tree-list {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-#tree-body {
-  padding: 0px;
-}
-
 .panel-body#details {
   padding:0px;
 }
@@ -664,7 +499,9 @@ a.active:hover + p {
 span.selected:hover + p {
   display: block;
 }
-
-.has_active_debug_locs>a {
-  font-weight:bold !important;
+.btn.btn-outline-primary {
+  margin-right:4px;
+}
+div.card-body {
+  padding:8px;
 }

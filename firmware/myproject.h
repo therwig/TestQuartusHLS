@@ -22,8 +22,8 @@ typedef uint4 in_ctr_t;
 typedef uint3 l1_ctr_t;
 typedef uint2 out_ctr_t;
 
-typedef uint6 ind_w1_t; // NIN*NL1 50 -> 64
-typedef uint3 ind_w2_t; // NL1*NOUT 5 -> 8
+typedef uint6 ind_w1_t; // NIN*NL1 50 -> round up to 64
+typedef uint3 ind_w2_t; // NL1*NOUT 5 -> round up to 8
 
 
 

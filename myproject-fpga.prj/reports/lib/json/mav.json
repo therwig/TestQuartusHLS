@@ -73,7 +73,7 @@
                 [
                   {
                     "filename":"firmware/myproject.cpp"
-                    , "line":434
+                    , "line":105
                   }
                 ]
               ]
@@ -84,7 +84,7 @@
                   , "Width":"16 bits"
                   , "Depth":"0"
                   , "Stall-free":"No"
-                  , "Start Cycle":"13"
+                  , "Start Cycle":"11"
                   , "Latency":"0"
                   , "Reference":
                   [
@@ -158,7 +158,7 @@
     , {
       "type":"stream"
       , "id":6
-      , "name":"do.myproject"
+      , "name":"call.myproject"
       , "debug":
       [
         [

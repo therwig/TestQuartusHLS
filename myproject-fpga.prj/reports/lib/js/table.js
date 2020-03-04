@@ -10,33 +10,16 @@
 // aren't strict, but we shouldn't have any of those anyway.
 /* jshint -W097 */
 
-// try to parse the JSON
-// return parsed JSON if valid
-// return null if the JSON is empty or invalid
-function tryParseJSON(json) {
-    var valid = !$.isEmptyObject(json);
-    if (valid) {
-        if (typeof json !== "string") {
-            // If we've gotten to this point, this is already a valid Javascript object.
-            return json;
-        }
-        try {
-            return JSON.parse(json);
-        } catch(e) {
-            console.log(e);
-            return null;
-        }
-    } else {
-        return null;
-    }
-}
-
 // parseTable function is the core parser and should be run for each table
 // jsonView:    table report view
 // json:        JSON data
 // initLevel:   initial level for first element in JSON data (determines indenting)
 // getClass:    function to get the class of the table row
 //              if no classes specific to table, pass returnEmptyString here
+//              TODO: this is too low level of control we are providing to compiler backend
+//              The direction is to provide hover, collipsible, sortable, filterable
+//              getClass callback should only be used if user wants additional features
+//              that they are willing implement their 
 // needToParse: function to determine whether the parser should parse child
 //              if parser should always parse children, pass returnTrue here
 // needToSort:  function to determine whether the child needs sorting
@@ -78,8 +61,8 @@ function parseTable(jsonView, json, initLevel, getClass, needToParse, needToSort
 
             columns.forEach( function(col, i) {
                 table_header += "<th class='";
-                if (i) table_header += "res-val";
-                else   table_header += "res-title";
+                if (i) table_header += "value-col";
+                else   table_header += "name-col";
                 table_header += "'>";
                 if (col === "Hyper-Optimized Handshaking") table_header += "Hyper-Optimized<br>Handshaking"; // workaround for very long text
                 else table_header += col;
@@ -104,8 +87,8 @@ function parseTable(jsonView, json, initLevel, getClass, needToParse, needToSort
         // recursively parse row and its children, add this information to the html table
         function parse(row, level, parent, updateData, replace_name) {
 
-            // Perform some basic sanitization on the row name
-            if (row.name) { row.name = row.name.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+            // Perform some basic sanitization
+            if (row.name) row.name = row.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             var isParent       = row.hasOwnProperty('children') && row.children.length;
             var htmlClass      = getClass(row, isParent);
@@ -137,11 +120,6 @@ function parseTable(jsonView, json, initLevel, getClass, needToParse, needToSort
                     // Do not access partitions from kernel system, they should be parsed separately
                     if (needToParse(childRow)) {
                         htmlTemp = parse(childRow, level+1, row, updateNextData, row.name == "Feedback");
-                        // This colours all of the resources with children except for split memory in red
-                        // Split memory is determined using the detail string added at the bottom of the addLocalMemResources function in ACLAreaUtils.cpp
-                        if (childRow.type == "resource" && (row.type == "module" || row.type == "function") && (childRow.hasOwnProperty('children') && childRow.children.length) && !(childRow.hasOwnProperty('details') && childRow.details.length && childRow.details[0].hasOwnProperty('text') && childRow.details[0].text.indexOf("was split into multiple parts due to optimizations") != -1)){
-                            htmlTemp = htmlTemp.replace("res-row", "resource-totalres-row");
-                        }
                         if (childRow.name == "Global interconnect" || childRow.name == "Data control overhead" || childRow.name == "Function overhead"){
                             htmlOut += htmlTemp;
                         // Split memory should be sorted at the top with all of the resources that don't have children
@@ -179,7 +157,7 @@ function parseTable(jsonView, json, initLevel, getClass, needToParse, needToSort
                         t += " > ";
                         if (count & 1) t += "\n";
                       }
-                      t += "<a style='cursor:pointer;' onClick='syncEditorPaneToLineNoPropagagte(event, " + d.line;
+                      t += "<a tabindex style='cursor:pointer;' onClick='syncEditorPaneToLineNoPropagagte(event, " + d.line;
                       t += ", \"" + getFilename(d.filename) + "\")'";
                       t += ">" + getShortFilename(d.filename) + ":" + d.line + "</a>";
                       });
@@ -221,18 +199,18 @@ function parseTable(jsonView, json, initLevel, getClass, needToParse, needToSort
             if (shorten_name && jsonView !== VIEWS.SUMMARY) short_title = name.match(/.*\/.*:\d/i) ? name.replace(/.*\//g, '') : name;
 
             // add indent to row in table
-            row += "<td class='res-title' style='padding-left:" + ((level) ? level*INDENT : 8) + "px;'>";
+            row += "<td class='name-col' style='padding-left:" + ((level) ? level*INDENT : 8) + "px;'>";
 
             // add chevron to collapsible parents
-            if (htmlClass.indexOf('parent') !== -1) row += "<a class='ar-toggle glyphicon glyphicon-chevron-right' style='color:black;padding-left:2px;'></a>&nbsp";
+            if (htmlClass.indexOf('parent') !== -1) row += "<span class=\"body glyphicon ar-toggle glyphicon-chevron-right\" aria-hidden=\"false\">&#xe080;</span>&nbsp";
             else                                    row += "&nbsp&nbsp";
 
             // add row name, data, and details
             row += short_title + "</td>";
             for (var i = 0; i < data.length; i++) {
-                row += "<td class='res-val'>" + data[i] + "</td>";
+                row += "<td class='value-col'>" + data[i] + "</td>";
             }
-            if (columns && columns.last_item() === "Details") row += "<td class='res-val'>" + shortDetails + "</td>";
+            if (columns && columns.last_item() === "Details") row += "<td class='value-col'>" + shortDetails + "</td>";
 
             row += "</tr>";
             return row;
@@ -323,174 +301,6 @@ function getToolTipDetailsFromJSON(JSON_details) {
     return tt;
 }
 
-// Generate html details from JSON
-function getHTMLDetailsFromJSON(JSON_details, title) {
-    if (!JSON_details || !JSON_details.length) return "";
-
-    var DETAIL = {
-        TEXT:    "text",
-        BRIEF:   "brief",
-        TABLE:   "table",
-        UNKNOWN: "unknown"  // for temporary use when tracking bullet points,
-                            // none of the JSON details should have this type
-    };
-
-    var html_details = (title !== undefined) ? "<b>" + title + ":</b><br>" : "";
-    var list_stack = [];
-    list_stack.push(DETAIL.UNKNOWN);
-    return generateHTMLDetails(html_details, JSON_details, list_stack);
-
-    // Generate html details from array (list) or object (table)
-    function generateHTMLDetails(html_details, JSON_details, list_stack) {
-
-        JSON_details.forEach(function (detail) {
-            var use_html_list = implementHTMLList(JSON_details, list_stack);
-
-            // add <ul> and </ul> tags for details which are implemented in list style
-            if (detail.type == DETAIL.TEXT && (list_stack.last_item() == DETAIL.UNKNOWN ||
-                list_stack.last_item() == DETAIL.TABLE) && use_html_list) {
-                html_details += "<ul style='margin-left: 10px; padding-left: 10px;'>";
-            } else if (detail.type === DETAIL.TABLE && list_stack.last_item() === DETAIL.TABLE &&
-                      use_html_list) {
-                html_details += "</ul>";
-            }
-
-            // keep track of type of details being printed
-            list_stack[list_stack.length-1] = detail.type;
-
-            // generate <li> or <table> html detail
-            html_details = generateSingleHTMLDetail(html_details, detail, list_stack, use_html_list);
-        });
-
-        // close last list if necessary
-        if (list_stack.last_item() == DETAIL.TEXT && implementHTMLList(JSON_details, list_stack)) {
-            html_details += "</ul>";
-        }
-
-        list_stack.pop();
-        return html_details;
-    }
-
-    // Generate html table data or list item for detail
-    function generateSingleHTMLDetail(html_details, JSON_details, list_stack, use_li) {
-
-        // if detail is type table:
-        // print key in first column, value in second column
-        if (JSON_details.type == "table") {
-            // these variables are needed to sort the table details in a more resonable order;
-            // Required size and Implemented size come one after the other, bank information stays together, Additional info comes at the end
-            var req_and_impl_size = [];
-            var banks_related = [];
-            var additional_info_html = "";
-            var other_details = [];
-            var reference_link = "";
-            var html_temp;
-
-            html_details += "<table id='DetailsTable' class='table-striped'>";
-            $.each(JSON_details, function (key, value) {
-                html_temp = "";
-                if (key === "type") return;
-                html_temp += "<tr>";
-                html_temp += "<td>" + key + "</td>";
-                if (value instanceof Array) {
-                list_stack.push(DETAIL.UNKNOWN);
-                html_temp += "<td>";
-                html_temp = generateHTMLDetails(html_temp, value, list_stack);
-                html_temp += "</td>";
-                } else {
-                html_temp += "<td>" + value + "</td>";
-                }
-
-                // group the detail into the appropriate group depending on the key
-                if (key.indexOf("Additional information") != -1){
-                    additional_info_html = html_temp;
-                } else if (key.indexOf("Requested size") != -1) {
-                    req_and_impl_size.unshift(html_temp);
-                } else if (key.indexOf("Implemented size") != -1) {
-                    req_and_impl_size.push(html_temp);
-                } else if (key.toLowerCase().indexOf("bank") != -1 || key.indexOf("Total replication") != -1) {
-                    banks_related.push(html_temp);
-                } else if (key.toLowerCase().indexOf("reference") != -1) {
-                    reference_link = html_temp;
-                } else {
-                    other_details.push(html_temp);
-                }
-            });
-            // add the details to the actual html_details string in the appropriate order
-            req_and_impl_size.forEach( function(html_string) {
-                html_details += html_string;
-            });
-            banks_related.forEach( function(html_string) {
-                html_details += html_string;
-            });
-            other_details.forEach( function(html_string) {
-                html_details += html_string;
-            });
-            html_details += additional_info_html;
-            html_details += reference_link;
-
-            html_details += "</table>";
-
-        // otherwise add text detail
-        // add as <li> unless only single item
-        } else {
-            if (use_li) html_details += "<li>";
-            html_details += insertLinks(JSON_details.text, JSON_details.links);
-            if (JSON_details.details) {
-                list_stack.push(DETAIL.UNKNOWN);
-                html_details = generateHTMLDetails(html_details, JSON_details.details, list_stack);
-            }
-            if (use_li) html_details += "</li>";
-        }
-        return html_details;
-    }                                                   
-
-    // Given the text and links, replace the instances of '%L' with the proper link information
-    // Guide: add <a></a> link to OpenCL Best Practices Guide
-    // View:  add <a></a> link to switch views (to Area analysis, Loops report, etc.)
-    // File:  add <a></a> link to file and source line in editor
-    function insertLinks(text, links) {
-        if (links === undefined) return text;
-        links.forEach(function (link) {
-        var link_name = "";
-
-        // insert link to Best Practices Guide
-        if (link.guide) {
-            link_name = "<a href='" + link.link + "'>" + link.guide + "</a>";
-
-        // insert link to alternate view
-        } else if (link.view) {
-            var jsonView = VIEWS.SUMMARY;
-            Object.keys(VIEWS).forEach(function (v) {
-                if (VIEWS[v].name === link.view) jsonView = VIEWS[v];
-            });
-            link_name = "<a href='" + jsonView.hash + "' onClick='goToView(" + jsonView.value + ", true)'>" + jsonView.name + "</a>";
-
-        // insert link to file and line
-        } else if (link.filename == "Unknown location") {
-            link_name = "<a href='#' onClick='editorNoHighlightActiveLine()'>Unknown location</a>";
-        } else {
-            link_name = "<a href='#' onClick='syncEditorPaneToLine(" + link.line + ", \"" +
-                        getFilename(link.filename) + "\")'>" + getShortFilename(link.filename) + ": " + link.line + "</a>";
-        }
-        text = text.replace(/\%L/, link_name);
-        });
-        return text;
-    }
-
-    // Return true if details should be implemented in an html list
-    function implementHTMLList(details, list_stack) {
-        // print the details in a point form list if:
-        //   1. there are multiple details                   or
-        //   2. the detail has subdetails                    or
-        //   3. the details is a subdetail of a text detail
-        //   Note: it is assumed that the detail is of type 'text'
-        return details.length > 1 ||
-            (details.length == 1 && details.hasOwnProperty('details') && details.details.length) ||
-            (list_stack.length > 1 && list_stack[list_stack.length - 2] == DETAIL.TEXT);
-    }
-}
-
 // parses summary data and returns html tables 
 function parseSummaryData(infoJSON, warningsJSON, json, quartusJSON) {
     var summaryInfo = "";
@@ -507,17 +317,7 @@ function parseSummaryData(infoJSON, warningsJSON, json, quartusJSON) {
     }
 
     if (quartusJSON !== undefined) {
-        summaryInfo += "<table class='table table-hover'>";
-        summaryInfo += "<text><b>&nbsp;" + quartusJSON.quartusFitClockSummary.name + "</b></text>";
-        summaryInfo += parseTable(VIEWS.SUMMARY, quartusJSON.quartusFitClockSummary, -1, getClass, returnTrue, returnFalse, doNothing);
-        summaryInfo += "</table>";
-        // check quartusFitResourceSummary before parsing
-        if (quartusJSON.hasOwnProperty('quartusFitResourceUsageSummary')) {
-            summaryInfo += "<table class='table table-hover'>";
-            summaryInfo += "<text><b>&nbsp;" + quartusJSON.quartusFitResourceUsageSummary.name + "</b></text>";
-            summaryInfo += parseTable(VIEWS.SUMMARY, quartusJSON.quartusFitResourceUsageSummary, -1, getClass, returnTrue, returnFalse, doNothing);
-            summaryInfo += "</table>";
-        }
+      summaryInfo += parseQuartusData(quartusJSON);
     }
 
     // create table for Kernel Summary
@@ -593,13 +393,43 @@ function parseSummaryData(infoJSON, warningsJSON, json, quartusJSON) {
     }
 }
 
+function parseQuartusData(quartusJSON) {
+  var quartusHTML = "";
+  // check sections before parsing
+  if (quartusJSON.hasOwnProperty('quartusFitClockSummary')) {
+    // Fit clock summary should be there at all times
+    quartusHTML += "<table class='table table-hover'>";
+    quartusHTML += "<text><b>&nbsp;" + quartusJSON.quartusFitClockSummary.name + "</b></text>";
+    quartusHTML += parseTable(VIEWS.SUMMARY, quartusJSON.quartusFitClockSummary, -1, getClass, returnTrue, returnFalse, doNothing);
+    quartusHTML += "</table>";
+  }
+  if (quartusJSON.hasOwnProperty('quartusFitResourceUsageSummary')) {
+    quartusHTML += "<table class='table table-hover'>";
+    quartusHTML += "<text><b>&nbsp;" + quartusJSON.quartusFitResourceUsageSummary.name + "</b></text>";
+    quartusHTML += parseTable(VIEWS.SUMMARY, quartusJSON.quartusFitResourceUsageSummary, -1, getClass, returnTrue, returnFalse, doNothing);
+    quartusHTML += "</table>";
+  }
+  return quartusHTML;
+
+  // for summary table, the necessary classes are added to the JSON file
+  function getClass(row, parent) {
+    var classes = "";
+    if (row.hasOwnProperty("classes")) {
+        row.classes.forEach(function(c) {
+            classes += " " + c;
+        });
+    }
+    return classes;
+  }
+}
+
 // parses loop data and returns html table
 function parseLoopData(json) {
     
     return parseTable(VIEWS.OPT, json, -1, getClass, returnTrue, returnFalse, processData);
 
     function getClass(row, parent) {
-        return "res-row" + ((row.name && row.name.search("Fully unrolled loop") >= 0) ? " ful" : "");
+        return ((row.name && row.name.search("Fully unrolled loop") >= 0) ? "ful" : "");
     }
 
     function processData(row, parent) {
@@ -635,7 +465,7 @@ function parseAreaData(json) {
     return parseTable(VIEWS.AREA_SYS, json, 0, getClass, needToParse, needToSort, processData);
 
     function getClass(row, parent) {
-        return ((row.type === "resource") ? "res-row collapse" : (row.type + "-totalres-row collapse")) + ((parent) ? " parent" : "");
+        return "collapse" + ((parent) ? " parent" : "");
     }
 
     function needToParse(row) {
@@ -687,7 +517,7 @@ function parseIncrementalData(json) {
     return table;
 
     function getClass(row, parent) {
-        return "res-row collapse" + ((parent) ? " parent" : "");
+        return "collapse" + ((parent) ? " parent" : "");
     }
 }
 
@@ -698,7 +528,7 @@ function parseVerifData(json) {
     /*return parseTable(VIEWS.VERIF, json, 0, getClass, returnTrue, returnFalse, doNothing);
 
     function getClass(row, parent) {
-        return "res-row";
+        return "";
     }*/
 
     return parseLoopTable(json, false);
@@ -734,9 +564,9 @@ function parseIIEstData(json) {
 
     return iiEstInfo;
 
-    // assuming class is always res-row
+    // returns nothing since table don't have collapsible or filter feature
     function getClass(row, parent) {
-        return "res-row";
+        return "";
     }
 
     function processDataForCompII(row, parent) {
@@ -979,11 +809,11 @@ parseLoopTable(theJSON, parseLoops) {
     createTableHeader() {
         var table_header = "";
 
-        table_header += "<thead><tr class='res-heading-row' data-ar-vis=0 data-level=0 id='table-header'><th class='res-title'></th>";
+        table_header += "<thead><tr class='res-heading-row' data-ar-vis=0 data-level=0 id='table-header'><th class='name-col'></th>";
         theJSON.columns.forEach(function (h) {
-            table_header += "<th class='res-val'>" + h + "</th>";
+            table_header += "<th class='value-col'>" + h + "</th>";
         });
-        table_header += "<th class='res-val'>Details</th></tr></thead>";
+        table_header += "<th class='value-col'>Details</th></tr></thead>";
 
         // Spacer row with fake data
         table_header += "<tbody><tr data-level=0 id=first-row><td>Spacer</td>";
@@ -999,16 +829,14 @@ parseLoopTable(theJSON, parseLoops) {
     function
     createRow(title, data, details, line, level, filename, resources)
     {
-        var row = "<tr class='res-row ";
+        var row = "<tr";
         var hasDetails = true;
         if (details === undefined || details.length === 0) {
             hasDetails = false;
         }
 
         // Custom class to show/hide Fully unrolled loops
-        if (title == "Fully unrolled loop") { row += " ful"; }
-
-        row += "'";
+        if (title == "Fully unrolled loop") { row += " class='ful'"; }
 
         // Assign optIndex to 0 if no details or to a value
         if (hasDetails) {
@@ -1021,7 +849,7 @@ parseLoopTable(theJSON, parseLoops) {
         else { row += " onClick='editorNoHighlightActiveLine()'"; }
 
 
-        row += "><td class='res-title' style='text-indent:" + level*indent + "px'>";
+        row += "><td class='name-col' style='text-indent:" + level*indent + "px'>";
         row += title;
         if (parseLoops) {
             row += " (";
@@ -1034,16 +862,16 @@ parseLoopTable(theJSON, parseLoops) {
 
         // add data columns
         for (var j = 0; j < data.length; j++) {
-            row += "<td class='res-val'>" + data[j] + "</td>";
+            row += "<td class='value-col'>" + data[j] + "</td>";
         }
 
         // add details column
-        if (hasDetails) { row += "<td class='res-val' >" + details[0] + "</td>"; }
-        else { row += "<td class='res-val'></td>"; }
+        if (hasDetails) { row += "<td class='value-col' >" + details[0] + "</td>"; }
+        else { row += "<td class='value-col'></td>"; }
 
         // details section
         if (resources !== undefined && resources.length > 0) {
-            var infohtml = "<ul class='details-list'><b>" + title + ":</b><br>";
+            var infohtml = "<ul class='card-title'>" + title + ":<br>";
             for (var ri = 0; ri < resources.length; ri++) {
                 if (resources[ri].name !== undefined) infohtml += resources[ri].name + "<br>";
                 if (resources[ri].subinfos === undefined) {
@@ -1112,6 +940,29 @@ parseLoopTable(theJSON, parseLoops) {
 
 }
 //-------------------------------------------------------------------------------------------
+
+// Arguments:
+//   element  : The span element that contains the chervon icon
+//   direction: direction support is 'down', 'right' or 'none'. When is none, it will just toggle
+//              the currently direction, i.e. right to down or down to right.
+function toggleChevon(element, direction) {
+  if (element === undefined || direction === undefined) {
+    console.log("Warning! Toggle chevon failed.");
+    return;
+  }
+  // Change down if want down and currently right
+  if ((direction === 'none' || direction === 'down') && element.className.indexOf(' glyphicon-chevron-right') > -1) {  // Right to down
+    element.className = element.className.replace(/ glyphicon-chevron-right/, ' glyphicon-chevron-down');
+    element.innerHTML = "&#xe114;";
+    return;
+  }
+  else if ((direction === 'none' || direction === 'right') && element.className.indexOf(' glyphicon-chevron-down') > -1) {
+    element.className = element.className.replace(/ glyphicon-chevron-down/, ' glyphicon-chevron-right');
+    element.innerHTML = "&#xe080;";  // Back to right
+  return;
+  }
+  // do nothing
+}
 
 function returnFalse() { return false; }
 function returnTrue()  { return true; }
